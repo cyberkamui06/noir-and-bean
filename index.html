@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NOIR & BEAN — Coffee After Hours</title>
+
+    <meta
+        name="description"
+        content="NOIR & BEAN — premium coffee brewed for the after hours."
+    >
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         PAGE LOADER
+    ========================== -->
+
+    <div id="page-loader">
+
+        <div class="loader-content">
+
+            <div class="coffee-loader">☕</div>
+
+            <div class="loader-brand">
+                NOIR & BEAN
+            </div>
+
+            <div class="loader-line"></div>
+
+            <span>
+                BREWING YOUR EXPERIENCE
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <header class="navbar">
+
+        <a href="#" class="logo">
+            NOIR & BEAN
+        </a>
+
+        <nav class="nav-links">
+
+            <a href="#menu">Menu</a>
+
+            <a href="#story">Our Story</a>
+
+            <a href="#contact">Contact</a>
+
+        </nav>
+
+        <button
+            class="cart-button"
+            onclick="toggleCart()"
+        >
+
+            ORDER
+
+            <span id="cart-count">
+                0
+            </span>
+
+        </button>
+
+    </header>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="eyebrow">
+                    EST. 2026 • LAGOS
+                </p>
+
+                <h1>
+                    BREWED FOR
+                    <span>THE AFTER HOURS.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Coffee for the late nights,
+                    early mornings and everything
+                    in between.
+                </p>
+
+                <a
+                    href="#menu"
+                    class="hero-button"
+                >
+                    EXPLORE THE MENU
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             MENU
+        ========================== -->
+
+        <section
+            id="menu"
+            class="menu"
+        >
+
+            <div class="section-title">
+
+                <p class="eyebrow">
+                    THE MENU
+                </p>
+
+                <h2>
+                    YOUR NEXT
+                    <span>FIX.</span>
+                </h2>
+
+            </div>
+
+
+            <div class="menu-grid">
+
+
+                <!-- PRODUCT 01 -->
+
+                <article class="product-card">
+
+                    <div class="product-image">
+
+                        <img
+                            src="images/noir.jpg"
+                            alt="The Noir espresso"
+                        >
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div>
+
+                            <p class="product-number">
+                                01
+                            </p>
+
+                            <h3>
+                                THE NOIR
+                            </h3>
+
+                        </div>
+
+                        <span class="price">
+                            ₦2,500
+                        </span>
+
+                    </div>
+
+                    <p class="description">
+                        Double espresso.
+                        Bold, intense and unapologetic.
+                    </p>
+
+                    <button
+                        class="add-btn"
+                        onclick="addToCart('The Noir', 2500)"
+                    >
+                        ADD TO ORDER +
+                    </button>
+
+                </article>
+
+
+                <!-- PRODUCT 02 -->
+
+                <article class="product-card">
+
+                    <div class="product-image">
+
+                        <img
+                            src="images/latte.jpg"
+                            alt="Velvet Latte"
+                        >
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div>
+
+                            <p class="product-number">
+                                02
+                            </p>
+
+                            <h3>
+                                VELVET LATTE
+                            </h3>
+
+                        </div>
+
+                        <span class="price">
+                            ₦4,000
+                        </span>
+
+                    </div>
+
+                    <p class="description">
+                        Silky espresso with
+                        perfectly steamed milk.
+                    </p>
+
+                    <button
+                        class="add-btn"
+                        onclick="addToCart('Velvet Latte', 4000)"
+                    >
+                        ADD TO ORDER +
+                    </button>
+
+                </article>
+
+
+                <!-- PRODUCT 03 -->
+
+                <article class="product-card">
+
+                    <div class="product-image">
+
+                        <img
+                            src="images/mocha.jpg"
+                            alt="Midnight Mocha"
+                        >
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div>
+
+                            <p class="product-number">
+                                03
+                            </p>
+
+                            <h3>
+                                MIDNIGHT MOCHA
+                            </h3>
+
+                        </div>
+
+                        <span class="price">
+                            ₦4,500
+                        </span>
+
+                    </div>
+
+                    <p class="description">
+                        Dark chocolate blended
+                        with rich espresso.
+                    </p>
+
+                    <button
+                        class="add-btn"
+                        onclick="addToCart('Midnight Mocha', 4500)"
+                    >
+                        ADD TO ORDER +
+                    </button>
+
+                </article>
+
+
+                <!-- PRODUCT 04 -->
+
+                <article class="product-card">
+
+                    <div class="product-image">
+
+                        <img
+                            src="images/blackout.jpg"
+                            alt="Blackout cold brew"
+                        >
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div>
+
+                            <p class="product-number">
+                                04
+                            </p>
+
+                            <h3>
+                                BLACKOUT
+                            </h3>
+
+                        </div>
+
+                        <span class="price">
+                            ₦3,800
+                        </span>
+
+                    </div>
+
+                    <p class="description">
+                        Slow-brewed cold coffee.
+                        Smooth and refreshing.
+                    </p>
+
+                    <button
+                        class="add-btn"
+                        onclick="addToCart('Blackout', 3800)"
+                    >
+                        ADD TO ORDER +
+                    </button>
+
+                </article>
+
+
+                <!-- PRODUCT 05 -->
+
+                <article class="product-card">
+
+                    <div class="product-image">
+
+                        <img
+                            src="images/caramel.jpg"
+                            alt="Copper Caramel coffee"
+                        >
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div>
+
+                            <p class="product-number">
+                                05
+                            </p>
+
+                            <h3>
+                                COPPER CARAMEL
+                            </h3>
+
+                        </div>
+
+                        <span class="price">
+                            ₦4,200
+                        </span>
+
+                    </div>
+
+                    <p class="description">
+                        Espresso, steamed milk
+                        and roasted caramel.
+                    </p>
+
+                    <button
+                        class="add-btn"
+                        onclick="addToCart('Copper Caramel', 4200)"
+                    >
+                        ADD TO ORDER +
+                    </button>
+
+                </article>
+
+
+                <!-- PRODUCT 06 -->
+
+                <article class="product-card">
+
+                    <div class="product-image">
+
+                        <img
+                            src="images/cloud.jpg"
+                            alt="Cloud Nine cappuccino"
+                        >
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div>
+
+                            <p class="product-number">
+                                06
+                            </p>
+
+                            <h3>
+                                CLOUD NINE
+                            </h3>
+
+                        </div>
+
+                        <span class="price">
+                            ₦4,000
+                        </span>
+
+                    </div>
+
+                    <p class="description">
+                        Creamy vanilla cappuccino
+                        with a soft finish.
+                    </p>
+
+                    <button
+                        class="add-btn"
+                        onclick="addToCart('Cloud Nine', 4000)"
+                    >
+                        ADD TO ORDER +
+                    </button>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             STORY
+        ========================== -->
+
+        <section
+            id="story"
+            class="about"
+        >
+
+            <div class="about-content">
+
+                <p class="eyebrow">
+                    OUR STORY
+                </p>
+
+                <h2>
+                    COFFEE FOR
+                    <span>THE UNEXPECTED.</span>
+                </h2>
+
+                <p>
+                    NOIR & BEAN was created for people
+                    who don't run on ordinary hours.
+                </p>
+
+                <p>
+                    We believe great coffee should feel
+                    like a moment — rich, deliberate and
+                    worth staying up for.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CONTACT
+        ========================== -->
+
+        <section
+            id="contact"
+            class="contact"
+        >
+
+            <div class="contact-container">
+
+
+                <div class="contact-info">
+
+                    <p class="eyebrow">
+                        FIND US
+                    </p>
+
+                    <h2>
+                        COME
+                        <span>THROUGH.</span>
+                    </h2>
+
+                    <div class="contact-details">
+
+                        <div>
+                            <small>
+                                LOCATION
+                            </small>
+
+                            <p>
+                                18 Adeola Odeku Street,
+                                Victoria Island, Lagos
+                            </p>
+                        </div>
+
+                        <div>
+                            <small>
+                                HOURS
+                            </small>
+
+                            <p>
+                                Every Day<br>
+                                7:00 AM — 11:00 PM
+                            </p>
+                        </div>
+
+                        <div>
+                            <small>
+                                PHONE
+                            </small>
+
+                            <p>
+                                +234 704 063 6421
+                            </p>
+                        </div>
+
+                        <div>
+                            <small>
+                                EMAIL
+                            </small>
+
+                            <p>
+                                cyberkamui@gmail.com
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="social-links">
+
+                        <a
+                            href="https://wa.me/2347040636421"
+                            target="_blank"
+                        >
+                            WHATSAPP
+                        </a>
+
+                        <a href="#">
+                            INSTAGRAM
+                        </a>
+
+                        <a href="#">
+                            TIKTOK
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="contact-form">
+
+                    <p class="eyebrow">
+                        GET IN TOUCH
+                    </p>
+
+                    <div class="input-group">
+
+                        <label>
+                            NAME
+                        </label>
+
+                        <input
+                            type="text"
+                            placeholder="Your name"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>
+                            EMAIL
+                        </label>
+
+                        <input
+                            type="email"
+                            placeholder="Your email"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>
+                            MESSAGE
+                        </label>
+
+                        <textarea
+                            rows="6"
+                            placeholder="Your message"
+                        ></textarea>
+
+                    </div>
+
+                    <button class="place-order-btn">
+                        SEND MESSAGE
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         CART
+    ========================== -->
+
+    <div
+        id="cart-panel"
+        class="cart-panel"
+    >
+
+        <div class="cart-header">
+
+            <h2>
+                YOUR ORDER
+            </h2>
+
+            <button
+                onclick="toggleCart()"
+                class="close-cart"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div id="cart-items"></div>
+
+        <div class="cart-footer">
+
+            <div class="cart-total">
+
+                <span>
+                    TOTAL
+                </span>
+
+                <strong id="cart-total">
+                    ₦0
+                </strong>
+
+            </div>
+
+            <button
+                class="place-order-btn"
+                onclick="checkout()"
+            >
+                CHECKOUT
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CHECKOUT
+    ========================== -->
+
+    <div
+        id="checkout-overlay"
+        class="checkout-overlay"
+    >
+
+        <div class="checkout-modal">
+
+            <div class="checkout-header">
+
+                <div>
+
+                    <p class="eyebrow">
+                        NOIR & BEAN
+                    </p>
+
+                    <h2>
+                        CHECKOUT
+                    </h2>
+
+                </div>
+
+                <button
+                    class="close-checkout"
+                    onclick="closeCheckout()"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="checkout-section">
+
+                <p class="checkout-label">
+                    ORDER TYPE
+                </p>
+
+                <div class="order-options">
+
+                    <button
+                        id="delivery-option"
+                        class="order-option active"
+                        onclick="selectOrderType('delivery')"
+                    >
+
+                        <span>
+                            🚚
+                        </span>
+
+                        <strong>
+                            DELIVERY
+                        </strong>
+
+                        <small>
+                            Get your order delivered
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        id="pickup-option"
+                        class="order-option"
+                        onclick="selectOrderType('pickup')"
+                    >
+
+                        <span>
+                            ☕
+                        </span>
+
+                        <strong>
+                            PICKUP
+                        </strong>
+
+                        <small>
+                            Pick up from our location
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="checkout-section">
+
+                <p class="checkout-label">
+                    YOUR DETAILS
+                </p>
+
+                <div class="form-grid">
+
+                    <div class="input-group">
+
+                        <label>
+                            FULL NAME
+                        </label>
+
+                        <input
+                            id="customer-name"
+                            type="text"
+                            placeholder="Your full name"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>
+                            PHONE NUMBER
+                        </label>
+
+                        <input
+                            id="customer-phone"
+                            type="tel"
+                            placeholder="080..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="address-group"
+                    class="input-group"
+                >
+
+                    <label>
+                        DELIVERY ADDRESS
+                    </label>
+
+                    <textarea
+                        id="customer-address"
+                        rows="3"
+                        placeholder="Where should we deliver your order?"
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="checkout-section">
+
+                <p class="checkout-label">
+                    YOUR ORDER
+                </p>
+
+                <div id="checkout-items"></div>
+
+            </div>
+
+
+            <div class="checkout-total">
+
+                <span>
+                    TOTAL
+                </span>
+
+                <strong id="checkout-total">
+                    ₦0
+                </strong>
+
+            </div>
+
+            <button
+                class="place-order-btn"
+                onclick="placeOrder()"
+            >
+                PLACE ORDER ON WHATSAPP
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         TOAST
+    ========================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    >
+
+        <span class="toast-icon">
+            ✓
+        </span>
+
+        <div>
+
+            <strong id="toast-title">
+                Added to cart
+            </strong>
+
+            <small id="toast-message">
+                Your coffee has been added.
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
