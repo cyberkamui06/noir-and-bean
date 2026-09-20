@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>Noir & Bean — Admin Login</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        background:
+            linear-gradient(
+                rgba(0, 0, 0, 0.65),
+                rgba(0, 0, 0, 0.65)
+            ),
+            #1a120e;
+        color: white;
+    }
+
+    .login-container {
+        width: 90%;
+        max-width: 420px;
+        padding: 40px;
+        background: #241914;
+        border-radius: 16px;
+        box-shadow:
+            0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .logo {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .logo h1 {
+        font-size: 32px;
+        letter-spacing: 3px;
+    }
+
+    .logo p {
+        margin-top: 8px;
+        color: #c7b7ae;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    input {
+        width: 100%;
+        padding: 14px 15px;
+        border: 1px solid #4a3730;
+        border-radius: 8px;
+        background: #17100d;
+        color: white;
+        font-size: 15px;
+        outline: none;
+    }
+
+    input:focus {
+        border-color: #b89472;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        background: #b89472;
+        color: #17100d;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .error {
+        display: none;
+        margin-bottom: 18px;
+        padding: 12px;
+        border-radius: 8px;
+        background: #4a1f1f;
+        color: #ffb3b3;
+        font-size: 14px;
+        text-align: center;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<div class="login-container">
+
+    <div class="logo">
+        <h1>NOIR & BEAN</h1>
+        <p>Admin Dashboard</p>
+    </div>
+
+    <div id="error-message" class="error"></div>
+
+    <form id="login-form">
+
+        <div class="form-group">
+            <label for="email">EMAIL</label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="admin@noirandbean.com"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">PASSWORD</label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+            >
+        </div>
+
+        <button
+            type="submit"
+            id="login-button"
+        >
+            LOGIN
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+    const loginForm =
+        document.getElementById("login-form");
+
+    const loginButton =
+        document.getElementById("login-button");
+
+    const errorMessage =
+        document.getElementById("error-message");
+
+
+    loginForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+            errorMessage.style.display = "none";
+
+            loginButton.disabled = true;
+            loginButton.textContent = "LOGGING IN...";
+
+            try {
+
+                const response =
+                    await fetch(
+                        "http://localhost:5000/api/auth/login",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email,
+                                password: password
+                            })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error || "Login failed"
+                    );
+                }
+
+                localStorage.setItem(
+                    "adminToken",
+                    data.token
+                );
+
+                window.location.href =
+                    "index.html";
+
+            } catch (error) {
+
+                console.error(error);
+
+                errorMessage.textContent =
+                    error.message;
+
+                errorMessage.style.display =
+                    "block";
+
+                loginButton.disabled = false;
+
+                loginButton.textContent =
+                    "LOGIN";
+            }
+        }
+    );
+</script>
+```
+
+</body>
+</html>

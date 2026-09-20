@@ -1,0 +1,19 @@
+# Environment variables
+.env
+.env.*
+
+# Node.js
+node_modules/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Prisma / generated files
+backend/.agents/
+backend/.claude/
+backend/.windsurf/
+backend/skills-lock.json
+backend/src/generated/

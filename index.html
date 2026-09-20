@@ -46,37 +46,35 @@
          NAVIGATION
     ========================== -->
 
-    <header class="navbar">
+   <header class="navbar">
 
-        <a href="#" class="logo">
-            NOIR & BEAN
-        </a>
+    <a href="#" class="logo">NOIR & BEAN</a>
 
-        <nav class="nav-links">
+    <div class="nav-links" id="nav-links">
 
-            <a href="#menu">Menu</a>
+        <a href="#menu">Menu</a>
+        <a href="#about">Our Story</a>
+        <a href="#contact">Contact</a>
 
-            <a href="#story">Our Story</a>
-
-            <a href="#contact">Contact</a>
-
-        </nav>
-
-        <button
-            class="cart-button"
-            onclick="toggleCart()"
-        >
-
+        <button class="nav-order" onclick="toggleCart()">
             ORDER
-
-            <span id="cart-count">
-                0
-            </span>
-
+            <span id="cart-count">0</span>
         </button>
 
-    </header>
+    </div>
 
+    <button
+        class="menu-toggle"
+        id="menu-toggle"
+        onclick="toggleMobileMenu()"
+        aria-label="Open menu"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+</header>
 
     <!-- =========================
          HERO
@@ -181,7 +179,7 @@
 
                     <button
                         class="add-btn"
-                        onclick="addToCart('The Noir', 2500)"
+                        onclick="addToCart(7,  'The Noir', 2500)"
                     >
                         ADD TO ORDER +
                     </button>
@@ -229,7 +227,7 @@
 
                     <button
                         class="add-btn"
-                        onclick="addToCart('Velvet Latte', 4000)"
+                        onclick="addToCart(8,  'Velvet Latte', 4000)"
                     >
                         ADD TO ORDER +
                     </button>
@@ -277,7 +275,7 @@
 
                     <button
                         class="add-btn"
-                        onclick="addToCart('Midnight Mocha', 4500)"
+                        onclick="addToCart(9, 'Midnight Mocha', 4500)"
                     >
                         ADD TO ORDER +
                     </button>
@@ -325,7 +323,7 @@
 
                     <button
                         class="add-btn"
-                        onclick="addToCart('Blackout', 3800)"
+                        onclick="addToCart(10, 'Blackout', 3800)"
                     >
                         ADD TO ORDER +
                     </button>
@@ -373,7 +371,7 @@
 
                     <button
                         class="add-btn"
-                        onclick="addToCart('Copper Caramel', 4200)"
+                        onclick="addToCart(11, 'Copper Caramel', 4200)"
                     >
                         ADD TO ORDER +
                     </button>
@@ -421,7 +419,7 @@
 
                     <button
                         class="add-btn"
-                        onclick="addToCart('Cloud Nine', 4000)"
+                        onclick="addToCart(12, 'Cloud Nine', 4000)"
                     >
                         ADD TO ORDER +
                     </button>
@@ -793,6 +791,15 @@
                             type="tel"
                             placeholder="080..."
                         >
+                    
+    <div class="form-group">
+    <label for="customer-email">EMAIL</label>
+    <input
+        type="email"
+        id="customer-email"
+        placeholder="your@email.com"
+    >
+</div>
 
                     </div>
 
