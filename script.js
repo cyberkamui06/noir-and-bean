@@ -1,9 +1,16 @@
 /* =========================
+   BACKEND
+========================= */
+
+const API_URL =
+    "https://civil-requirement-laundry-faster.trycloudflare.com";
+
+
+/* =========================
    PRODUCTS
 ========================= */
 
 let products = [];
-
 
 async function loadProducts() {
 
@@ -11,25 +18,19 @@ async function loadProducts() {
 
         const response =
             await fetch(
-                "http://localhost:5000/api/products"
+                `${API_URL}/api/products`
             );
 
-
         if (!response.ok) {
-
             throw new Error(
                 "Failed to load products"
             );
-
         }
-
 
         products =
             await response.json();
 
-
         updateProductButtons();
-
 
     } catch (error) {
 
@@ -55,14 +56,16 @@ function updateProductButtons() {
         if (!button) return;
 
         const card =
-            button.closest(".product-card");
+            button.closest(
+                ".product-card"
+            );
 
         if (!card) return;
 
 
         /* =========================
-           UPDATE PRODUCT NAME
-        ========================== */
+           PRODUCT NAME
+        ========================= */
 
         const nameElement =
             card.querySelector("h3");
@@ -76,11 +79,13 @@ function updateProductButtons() {
 
 
         /* =========================
-           UPDATE DESCRIPTION
-        ========================== */
+           DESCRIPTION
+        ========================= */
 
         const descriptionElement =
-            card.querySelector(".description");
+            card.querySelector(
+                ".description"
+            );
 
         if (descriptionElement) {
 
@@ -91,26 +96,32 @@ function updateProductButtons() {
 
 
         /* =========================
-           UPDATE PRICE
-        ========================== */
+           PRICE
+        ========================= */
 
         const priceElement =
-            card.querySelector(".price");
+            card.querySelector(
+                ".price"
+            );
 
         if (priceElement) {
 
             priceElement.textContent =
-                `₦${Number(product.price).toLocaleString()}`;
+                `₦${Number(
+                    product.price
+                ).toLocaleString()}`;
 
         }
 
 
         /* =========================
-           UPDATE IMAGE
-        ========================== */
+           IMAGE
+        ========================= */
 
         const imageElement =
-            card.querySelector(".product-image img");
+            card.querySelector(
+                ".product-image img"
+            );
 
         if (
             imageElement &&
@@ -127,8 +138,8 @@ function updateProductButtons() {
 
 
         /* =========================
-           UPDATE AVAILABILITY
-        ========================== */
+           AVAILABILITY
+        ========================= */
 
         if (product.available) {
 
@@ -162,6 +173,7 @@ function updateProductButtons() {
 
 }
 
+
 /* =========================
    CART
 ========================= */
@@ -169,18 +181,18 @@ function updateProductButtons() {
 let cart = [];
 
 
-function addToCart(id, name, price) {
+function addToCart(
+    id,
+    name,
+    price
+) {
 
     const product =
         products.find(
-            product => product.id === id
+            product =>
+                product.id === id
         );
 
-
-    /*
-       Check backend availability
-       before adding to cart.
-    */
 
     if (
         product &&
@@ -193,12 +205,14 @@ function addToCart(id, name, price) {
         );
 
         return;
+
     }
 
 
     const existingItem =
         cart.find(
-            item => item.id === id
+            item =>
+                item.id === id
         );
 
 
@@ -211,11 +225,8 @@ function addToCart(id, name, price) {
         cart.push({
 
             id: id,
-
             name: name,
-
             price: price,
-
             quantity: 1
 
         });
@@ -260,7 +271,6 @@ function updateCart() {
 
 
     let total = 0;
-
     let itemCount = 0;
 
 
@@ -350,7 +360,6 @@ function updateCart() {
     cartCount.textContent =
         itemCount;
 
-
     cartTotal.textContent =
         `₦${total.toLocaleString()}`;
 
@@ -431,7 +440,6 @@ function toggleCart() {
             "cart-panel"
         );
 
-
     cartPanel.classList.toggle(
         "active"
     );
@@ -443,7 +451,8 @@ function toggleCart() {
    CHECKOUT
 ========================= */
 
-let orderType = "delivery";
+let orderType =
+    "delivery";
 
 
 function checkout() {
@@ -685,16 +694,15 @@ async function placeOrder() {
     }
 
 
-    /*
-       Check availability again
-       before sending the order.
-    */
+    /* =========================
+       CHECK LATEST AVAILABILITY
+    ========================= */
 
     try {
 
         const productResponse =
             await fetch(
-                "http://localhost:5000/api/products"
+                `${API_URL}/api/products`
             );
 
 
@@ -746,6 +754,10 @@ async function placeOrder() {
     }
 
 
+    /* =========================
+       PREPARE ORDER ITEMS
+    ========================= */
+
     const orderItems =
         cart.map(
             item => ({
@@ -768,9 +780,13 @@ async function placeOrder() {
         );
 
 
+        /* =========================
+           SEND ORDER TO BACKEND
+        ========================= */
+
         const response =
             await fetch(
-                "http://localhost:5000/api/orders",
+                `${API_URL}/api/orders`,
                 {
 
                     method: "POST",
@@ -833,8 +849,12 @@ async function placeOrder() {
             data.order;
 
 
+        /* =========================
+           WHATSAPP MESSAGE
+        ========================= */
+
         let message =
-            `Hello NOIR & BEAN 👋\n\n`;
+            `Hello NOIR & BEAN \n\n`;
 
 
         message +=
@@ -931,6 +951,7 @@ async function placeOrder() {
     } catch (error) {
 
         console.error(
+            "Order failed:",
             error
         );
 
@@ -1115,7 +1136,6 @@ function toggleMobileMenu() {
             "nav-links"
         );
 
-
     const menuToggle =
         document.getElementById(
             "menu-toggle"
@@ -1167,6 +1187,267 @@ document
 
         }
     );
+
+
+/* =========================
+   ORDER TRACKING
+========================= */
+
+const trackingForm =
+    document.getElementById(
+        "tracking-form"
+    );
+
+
+const trackingResult =
+    document.getElementById(
+        "tracking-result"
+    );
+
+
+if (trackingForm) {
+
+    trackingForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const orderId =
+                document
+                    .getElementById(
+                        "tracking-order-id"
+                    )
+                    .value
+                    .trim();
+
+
+            if (!orderId) {
+                return;
+            }
+
+
+            trackingResult.innerHTML =
+                "<p>Checking your order...</p>";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/orders/track/${orderId}`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    trackingResult.innerHTML = `
+                        <div class="tracking-error">
+                            ${data.error || "Order not found."}
+                        </div>
+                    `;
+
+                    return;
+
+                }
+
+
+                /* =========================
+                   CURRENT STATUS
+                ========================= */
+
+                const status =
+                    data.status
+                        .replace("-", " ")
+                        .toUpperCase();
+
+
+                /* =========================
+                   STATUS ORDER
+                ========================= */
+
+                const progressStatuses = [
+                    "pending",
+                    "confirmed",
+                    "preparing",
+                    "ready",
+                    "delivered"
+                ];
+
+
+                const currentStatusIndex =
+                    progressStatuses.indexOf(
+                        data.status
+                    );
+
+
+                /* =========================
+                   PROGRESS STEPS
+                ========================= */
+
+                const progressSteps = [
+                    "PENDING",
+                    "CONFIRMED",
+                    "PREPARING",
+                    "READY",
+                    "DELIVERED"
+                ];
+
+
+                const progressHTML =
+                    progressSteps
+                        .map(
+                            (step, index) => {
+
+                                const completed =
+                                    index <=
+                                    currentStatusIndex
+                                        ? "completed"
+                                        : "";
+
+
+                                const line =
+                                    index <
+                                    progressSteps.length - 1
+                                        ? `
+                                            <div class="progress-line ${
+                                                index <
+                                                currentStatusIndex
+                                                    ? "completed"
+                                                    : ""
+                                            }"></div>
+                                        `
+                                        : "";
+
+
+                                return `
+
+                                    <div
+                                        class="progress-step ${completed}"
+                                    >
+
+                                        <span
+                                            class="progress-dot"
+                                        ></span>
+
+                                        <span>
+                                            ${step}
+                                        </span>
+
+                                    </div>
+
+                                    ${line}
+
+                                `;
+
+                            }
+                        )
+                        .join("");
+
+
+                /* =========================
+                   ORDER ITEMS
+                ========================= */
+
+                const items =
+                    data.items
+                        .map(
+                            item => `
+
+                                <div class="tracking-item">
+
+                                    <span>
+                                        ${item.product.name}
+                                        × ${item.quantity}
+                                    </span>
+
+                                    <span>
+                                        ₦${Number(
+                                            item.price
+                                        ).toLocaleString()}
+                                    </span>
+
+                                </div>
+
+                            `
+                        )
+                        .join("");
+
+
+                /* =========================
+                   DISPLAY TRACKING
+                ========================= */
+
+                trackingResult.innerHTML = `
+
+                    <div class="tracking-card">
+
+                        <p class="tracking-order-number">
+                            ORDER #${data.id}
+                        </p>
+
+
+                        <div class="tracking-status">
+                            ${status}
+                        </div>
+
+
+                        <div class="tracking-progress">
+                            ${progressHTML}
+                        </div>
+
+
+                        <div class="tracking-items">
+                            ${items}
+                        </div>
+
+
+                        <div class="tracking-total">
+
+                            <span>
+                                TOTAL
+                            </span>
+
+                            <span>
+                                ₦${Number(
+                                    data.total
+                                ).toLocaleString()}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            } catch (error) {
+
+                console.error(
+                    "Tracking failed:",
+                    error
+                );
+
+
+                trackingResult.innerHTML = `
+
+                    <div class="tracking-error">
+                        Unable to connect to the server.
+                        Please try again.
+                    </div>
+
+                `;
+
+            }
+
+        }
+    );
+
+}
 
 
 /* =========================

@@ -128,7 +128,55 @@ router.get("/", authenticateAdmin, async (req, res) => {
         });
     }
 });
+// GET order for customer tracking
+router.get("/track/:id", async (req, res) => {
+    try {
+        const id = Number(req.params.id);
 
+        if (!Number.isInteger(id)) {
+            return res.status(400).json({
+                error: "Invalid order ID",
+            });
+        }
+
+        const order = await prisma.order.findUnique({
+            where: {
+                id: id,
+            },
+            select: {
+                id: true,
+                total: true,
+                status: true,
+                createdAt: true,
+                items: {
+                    select: {
+                        quantity: true,
+                        price: true,
+                        product: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!order) {
+            return res.status(404).json({
+                error: "Order not found",
+            });
+        }
+
+        res.json(order);
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            error: "Failed to track order",
+        });
+    }
+});
 // GET one order
 router.get("/:id", authenticateAdmin, async (req, res) => {
     try {
