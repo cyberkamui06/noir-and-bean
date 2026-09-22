@@ -3,7 +3,7 @@
 ========================= */
 
 const API_URL =
-    "https://civil-requirement-laundry-faster.trycloudflare.com";
+    "https://music-affect-shoulder-boss.trycloudflare.com";
 
 
 /* =========================
@@ -22,13 +22,17 @@ async function loadProducts() {
             );
 
         if (!response.ok) {
+
             throw new Error(
                 "Failed to load products"
             );
+
         }
+
 
         products =
             await response.json();
+
 
         updateProductButtons();
 
@@ -46,130 +50,150 @@ async function loadProducts() {
 
 function updateProductButtons() {
 
-    products.forEach(product => {
+    products.forEach(
+        product => {
 
-        const button =
-            document.querySelector(
-                `.product-card button[onclick*="addToCart(${product.id},"]`
-            );
-
-        if (!button) return;
-
-        const card =
-            button.closest(
-                ".product-card"
-            );
-
-        if (!card) return;
+            const button =
+                document.querySelector(
+                    `.product-card button[onclick*="addToCart(${product.id},"]`
+                );
 
 
-        /* =========================
-           PRODUCT NAME
-        ========================= */
+            if (!button) return;
 
-        const nameElement =
-            card.querySelector("h3");
 
-        if (nameElement) {
+            const card =
+                button.closest(
+                    ".product-card"
+                );
 
-            nameElement.textContent =
-                product.name.toUpperCase();
+
+            if (!card) return;
+
+
+            /* =========================
+               PRODUCT NAME
+            ========================= */
+
+            const nameElement =
+                card.querySelector(
+                    "h3"
+                );
+
+
+            if (nameElement) {
+
+                nameElement.textContent =
+                    product.name.toUpperCase();
+
+            }
+
+
+            /* =========================
+               DESCRIPTION
+            ========================= */
+
+            const descriptionElement =
+                card.querySelector(
+                    ".description"
+                );
+
+
+            if (descriptionElement) {
+
+                descriptionElement.textContent =
+                    product.description || "";
+
+            }
+
+
+            /* =========================
+               PRICE
+            ========================= */
+
+            const priceElement =
+                card.querySelector(
+                    ".price"
+                );
+
+
+            if (priceElement) {
+
+                priceElement.textContent =
+                    `₦${Number(
+                        product.price
+                    ).toLocaleString()}`;
+
+            }
+
+
+            /* =========================
+               IMAGE
+            ========================= */
+
+            const imageElement =
+                card.querySelector(
+                    ".product-image img"
+                );
+
+
+            if (
+                imageElement &&
+                product.image
+            ) {
+
+                imageElement.src =
+                    product.image;
+
+
+                imageElement.alt =
+                    product.name;
+
+            }
+
+
+            /* =========================
+               AVAILABILITY
+            ========================= */
+
+            if (product.available) {
+
+                button.disabled =
+                    false;
+
+
+                button.textContent =
+                    "ADD TO ORDER +";
+
+
+                button.style.opacity =
+                    "1";
+
+
+                button.style.cursor =
+                    "pointer";
+
+            } else {
+
+                button.disabled =
+                    true;
+
+
+                button.textContent =
+                    "UNAVAILABLE";
+
+
+                button.style.opacity =
+                    "0.5";
+
+
+                button.style.cursor =
+                    "not-allowed";
+
+            }
 
         }
-
-
-        /* =========================
-           DESCRIPTION
-        ========================= */
-
-        const descriptionElement =
-            card.querySelector(
-                ".description"
-            );
-
-        if (descriptionElement) {
-
-            descriptionElement.textContent =
-                product.description || "";
-
-        }
-
-
-        /* =========================
-           PRICE
-        ========================= */
-
-        const priceElement =
-            card.querySelector(
-                ".price"
-            );
-
-        if (priceElement) {
-
-            priceElement.textContent =
-                `₦${Number(
-                    product.price
-                ).toLocaleString()}`;
-
-        }
-
-
-        /* =========================
-           IMAGE
-        ========================= */
-
-        const imageElement =
-            card.querySelector(
-                ".product-image img"
-            );
-
-        if (
-            imageElement &&
-            product.image
-        ) {
-
-            imageElement.src =
-                product.image;
-
-            imageElement.alt =
-                product.name;
-
-        }
-
-
-        /* =========================
-           AVAILABILITY
-        ========================= */
-
-        if (product.available) {
-
-            button.disabled = false;
-
-            button.textContent =
-                "ADD TO ORDER +";
-
-            button.style.opacity =
-                "1";
-
-            button.style.cursor =
-                "pointer";
-
-        } else {
-
-            button.disabled = true;
-
-            button.textContent =
-                "UNAVAILABLE";
-
-            button.style.opacity =
-                "0.5";
-
-            button.style.cursor =
-                "not-allowed";
-
-        }
-
-    });
+    );
 
 }
 
@@ -204,6 +228,7 @@ function addToCart(
             `${name} is currently unavailable.`
         );
 
+
         return;
 
     }
@@ -225,8 +250,11 @@ function addToCart(
         cart.push({
 
             id: id,
+
             name: name,
+
             price: price,
+
             quantity: 1
 
         });
@@ -256,10 +284,18 @@ function updateCart() {
             "cart-items"
         );
 
+
     const cartCount =
         document.getElementById(
             "cart-count"
         );
+
+
+    const mobileCartCount =
+        document.getElementById(
+            "mobile-cart-count"
+        );
+
 
     const cartTotal =
         document.getElementById(
@@ -267,10 +303,23 @@ function updateCart() {
         );
 
 
-    cartItems.innerHTML = "";
+    if (
+        !cartItems ||
+        !cartCount ||
+        !cartTotal
+    ) {
+
+        return;
+
+    }
+
+
+    cartItems.innerHTML =
+        "";
 
 
     let total = 0;
+
     let itemCount = 0;
 
 
@@ -282,7 +331,9 @@ function updateCart() {
                 item.quantity;
 
 
-            total += itemTotal;
+            total +=
+                itemTotal;
+
 
             itemCount +=
                 item.quantity;
@@ -295,11 +346,16 @@ function updateCart() {
                     <div class="cart-item-top">
 
                         <span class="cart-item-name">
+
                             ${item.name}
+
                         </span>
 
+
                         <span class="cart-item-price">
+
                             ₦${itemTotal.toLocaleString()}
+
                         </span>
 
                     </div>
@@ -310,24 +366,35 @@ function updateCart() {
                         <button
                             onclick="decreaseQuantity(${index})"
                         >
+
                             −
+
                         </button>
 
+
                         <span>
+
                             ${item.quantity}
+
                         </span>
+
 
                         <button
                             onclick="increaseQuantity(${index})"
                         >
+
                             +
+
                         </button>
+
 
                         <button
                             class="remove-item"
                             onclick="removeItem(${index})"
                         >
+
                             REMOVE
+
                         </button>
 
                     </div>
@@ -340,7 +407,9 @@ function updateCart() {
     );
 
 
-    if (cart.length === 0) {
+    if (
+        cart.length === 0
+    ) {
 
         cartItems.innerHTML = `
 
@@ -349,7 +418,9 @@ function updateCart() {
                 font-size:12px;
                 padding:20px 0;
             ">
+
                 Your order is empty.
+
             </p>
 
         `;
@@ -357,8 +428,29 @@ function updateCart() {
     }
 
 
+    /* =========================
+       DESKTOP CART COUNT
+    ========================= */
+
     cartCount.textContent =
         itemCount;
+
+
+    /* =========================
+       MOBILE CART COUNT
+    ========================= */
+
+    if (mobileCartCount) {
+
+        mobileCartCount.textContent =
+            itemCount;
+
+    }
+
+
+    /* =========================
+       CART TOTAL
+    ========================= */
 
     cartTotal.textContent =
         `₦${total.toLocaleString()}`;
@@ -373,6 +465,7 @@ function updateCart() {
 function increaseQuantity(index) {
 
     cart[index].quantity++;
+
 
     updateCart();
 
@@ -440,6 +533,14 @@ function toggleCart() {
             "cart-panel"
         );
 
+
+    if (!cartPanel) {
+
+        return;
+
+    }
+
+
     cartPanel.classList.toggle(
         "active"
     );
@@ -466,18 +567,28 @@ function checkout() {
             "Add something before checking out."
         );
 
+
         return;
 
     }
 
 
-    document
-        .getElementById(
+    const checkoutOverlay =
+        document.getElementById(
             "checkout-overlay"
-        )
-        .classList.add(
-            "active"
         );
+
+
+    if (!checkoutOverlay) {
+
+        return;
+
+    }
+
+
+    checkoutOverlay.classList.add(
+        "active"
+    );
 
 
     updateCheckout();
@@ -491,13 +602,22 @@ function checkout() {
 
 function closeCheckout() {
 
-    document
-        .getElementById(
+    const checkoutOverlay =
+        document.getElementById(
             "checkout-overlay"
-        )
-        .classList.remove(
-            "active"
         );
+
+
+    if (!checkoutOverlay) {
+
+        return;
+
+    }
+
+
+    checkoutOverlay.classList.remove(
+        "active"
+    );
 
 }
 
@@ -527,19 +647,32 @@ function selectOrderType(type) {
         );
 
 
-    document
-        .getElementById(
-            type + "-option"
-        )
-        .classList.add(
+    const selectedOption =
+        document.getElementById(
+            `${type}-option`
+        );
+
+
+    if (selectedOption) {
+
+        selectedOption.classList.add(
             "active"
         );
+
+    }
 
 
     const addressGroup =
         document.getElementById(
             "address-group"
         );
+
+
+    if (!addressGroup) {
+
+        return;
+
+    }
 
 
     if (
@@ -570,10 +703,21 @@ function updateCheckout() {
             "checkout-items"
         );
 
+
     const checkoutTotal =
         document.getElementById(
             "checkout-total"
         );
+
+
+    if (
+        !checkoutItems ||
+        !checkoutTotal
+    ) {
+
+        return;
+
+    }
 
 
     checkoutItems.innerHTML =
@@ -600,11 +744,16 @@ function updateCheckout() {
                 <div class="checkout-item">
 
                     <span>
+
                         ${item.name} × ${item.quantity}
+
                     </span>
 
+
                     <strong>
+
                         ₦${itemTotal.toLocaleString()}
+
                     </strong>
 
                 </div>
@@ -674,6 +823,7 @@ async function placeOrder() {
             "Please enter your name, email and phone number."
         );
 
+
         return;
 
     }
@@ -688,6 +838,7 @@ async function placeOrder() {
             "Missing address",
             "Please enter your delivery address."
         );
+
 
         return;
 
@@ -736,6 +887,7 @@ async function placeOrder() {
                         `${item.name} is no longer available.`
                     );
 
+
                     return;
 
                 }
@@ -765,6 +917,7 @@ async function placeOrder() {
                 productId:
                     item.id,
 
+
                 quantity:
                     item.quantity
 
@@ -789,7 +942,9 @@ async function placeOrder() {
                 `${API_URL}/api/orders`,
                 {
 
-                    method: "POST",
+                    method:
+                        "POST",
+
 
                     headers: {
 
@@ -797,6 +952,7 @@ async function placeOrder() {
                             "application/json"
 
                     },
+
 
                     body:
                         JSON.stringify({
@@ -806,11 +962,14 @@ async function placeOrder() {
                                 name:
                                     name,
 
+
                                 email:
                                     email,
 
+
                                 phone:
                                     phone,
+
 
                                 address:
                                     orderType ===
@@ -819,6 +978,7 @@ async function placeOrder() {
                                         : "Pickup"
 
                             },
+
 
                             items:
                                 orderItems
@@ -878,8 +1038,7 @@ async function placeOrder() {
 
 
         if (
-            orderType ===
-            "delivery"
+            orderType === "delivery"
         ) {
 
             message +=
@@ -915,6 +1074,10 @@ async function placeOrder() {
             ).toLocaleString()}`;
 
 
+        /* =========================
+           WHATSAPP URL
+        ========================= */
+
         const whatsappURL =
             "https://wa.me/2347040636421?text=" +
             encodeURIComponent(
@@ -928,12 +1091,22 @@ async function placeOrder() {
         );
 
 
+        /* =========================
+           CLEAR CART
+        ========================= */
+
         cart = [];
+
 
         updateCart();
 
+
         closeCheckout();
 
+
+        /* =========================
+           OPEN WHATSAPP
+        ========================= */
 
         setTimeout(
             () => {
@@ -996,6 +1169,17 @@ function showToast(
         );
 
 
+    if (
+        !toast ||
+        !toastTitle ||
+        !toastMessage
+    ) {
+
+        return;
+
+    }
+
+
     toastTitle.textContent =
         title;
 
@@ -1046,8 +1230,25 @@ window.addEventListener(
         setTimeout(
             () => {
 
-                loader.classList.add(
-                    "loaded"
+                /* =========================
+                   HIDE LOADER
+                ========================= */
+
+                if (loader) {
+
+                    loader.classList.add(
+                        "loaded"
+                    );
+
+                }
+
+
+                /* =========================
+                   SHOW MOBILE ORDER BUTTON
+                ========================= */
+
+                document.body.classList.add(
+                    "page-ready"
                 );
 
             },
@@ -1108,7 +1309,10 @@ const revealObserver =
         },
 
         {
-            threshold: 0.12
+
+            threshold:
+                0.12
+
         }
 
     );
@@ -1136,10 +1340,21 @@ function toggleMobileMenu() {
             "nav-links"
         );
 
+
     const menuToggle =
         document.getElementById(
             "menu-toggle"
         );
+
+
+    if (
+        !navLinks ||
+        !menuToggle
+    ) {
+
+        return;
+
+    }
 
 
     navLinks.classList.toggle(
@@ -1165,22 +1380,34 @@ document
                 "click",
                 () => {
 
-                    document
-                        .getElementById(
+                    const navLinks =
+                        document.getElementById(
                             "nav-links"
-                        )
-                        .classList.remove(
-                            "active"
                         );
 
 
-                    document
-                        .getElementById(
+                    const menuToggle =
+                        document.getElementById(
                             "menu-toggle"
-                        )
-                        .classList.remove(
+                        );
+
+
+                    if (navLinks) {
+
+                        navLinks.classList.remove(
                             "active"
                         );
+
+                    }
+
+
+                    if (menuToggle) {
+
+                        menuToggle.classList.remove(
+                            "active"
+                        );
+
+                    }
 
                 }
             );
@@ -1205,7 +1432,10 @@ const trackingResult =
     );
 
 
-if (trackingForm) {
+if (
+    trackingForm &&
+    trackingResult
+) {
 
     trackingForm.addEventListener(
         "submit",
@@ -1224,7 +1454,9 @@ if (trackingForm) {
 
 
             if (!orderId) {
+
                 return;
+
             }
 
 
@@ -1244,13 +1476,20 @@ if (trackingForm) {
                     await response.json();
 
 
-                if (!response.ok) {
+                if (
+                    !response.ok
+                ) {
 
                     trackingResult.innerHTML = `
+
                         <div class="tracking-error">
+
                             ${data.error || "Order not found."}
+
                         </div>
+
                     `;
+
 
                     return;
 
@@ -1263,7 +1502,10 @@ if (trackingForm) {
 
                 const status =
                     data.status
-                        .replace("-", " ")
+                        .replace(
+                            "-",
+                            " "
+                        )
                         .toUpperCase();
 
 
@@ -1272,11 +1514,17 @@ if (trackingForm) {
                 ========================= */
 
                 const progressStatuses = [
+
                     "pending",
+
                     "confirmed",
+
                     "preparing",
+
                     "ready",
+
                     "delivered"
+
                 ];
 
 
@@ -1291,18 +1539,27 @@ if (trackingForm) {
                 ========================= */
 
                 const progressSteps = [
+
                     "PENDING",
+
                     "CONFIRMED",
+
                     "PREPARING",
+
                     "READY",
+
                     "DELIVERED"
+
                 ];
 
 
                 const progressHTML =
                     progressSteps
                         .map(
-                            (step, index) => {
+                            (
+                                step,
+                                index
+                            ) => {
 
                                 const completed =
                                     index <=
@@ -1314,14 +1571,20 @@ if (trackingForm) {
                                 const line =
                                     index <
                                     progressSteps.length - 1
+
                                         ? `
-                                            <div class="progress-line ${
-                                                index <
-                                                currentStatusIndex
-                                                    ? "completed"
-                                                    : ""
-                                            }"></div>
+
+                                            <div
+                                                class="progress-line ${
+                                                    index <
+                                                    currentStatusIndex
+                                                        ? "completed"
+                                                        : ""
+                                                }"
+                                            ></div>
+
                                         `
+
                                         : "";
 
 
@@ -1335,11 +1598,15 @@ if (trackingForm) {
                                             class="progress-dot"
                                         ></span>
 
+
                                         <span>
+
                                             ${step}
+
                                         </span>
 
                                     </div>
+
 
                                     ${line}
 
@@ -1362,14 +1629,20 @@ if (trackingForm) {
                                 <div class="tracking-item">
 
                                     <span>
+
                                         ${item.product.name}
-                                        × ${item.quantity}
+                                        ×
+                                        ${item.quantity}
+
                                     </span>
 
+
                                     <span>
+
                                         ₦${Number(
                                             item.price
                                         ).toLocaleString()}
+
                                     </span>
 
                                 </div>
@@ -1388,35 +1661,48 @@ if (trackingForm) {
                     <div class="tracking-card">
 
                         <p class="tracking-order-number">
+
                             ORDER #${data.id}
+
                         </p>
 
 
                         <div class="tracking-status">
+
                             ${status}
+
                         </div>
 
 
                         <div class="tracking-progress">
+
                             ${progressHTML}
+
                         </div>
 
 
                         <div class="tracking-items">
+
                             ${items}
+
                         </div>
 
 
                         <div class="tracking-total">
 
                             <span>
+
                                 TOTAL
+
                             </span>
 
+
                             <span>
+
                                 ₦${Number(
                                     data.total
                                 ).toLocaleString()}
+
                             </span>
 
                         </div>
@@ -1424,6 +1710,7 @@ if (trackingForm) {
                     </div>
 
                 `;
+
 
             } catch (error) {
 
@@ -1436,8 +1723,10 @@ if (trackingForm) {
                 trackingResult.innerHTML = `
 
                     <div class="tracking-error">
+
                         Unable to connect to the server.
                         Please try again.
+
                     </div>
 
                 `;
@@ -1453,5 +1742,18 @@ if (trackingForm) {
 /* =========================
    START
 ========================= */
+
+/*
+    Makes sure both the desktop
+    and mobile cart counters start
+    at 0 when the page opens.
+*/
+
+updateCart();
+
+
+/*
+    Load products from backend.
+*/
 
 loadProducts();

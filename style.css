@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;500;600;700&display=swap");
 
 
 /* =========================
@@ -68,7 +68,9 @@ button:active {
 #page-loader {
     position: fixed;
     inset: 0;
+
     background: #11100e;
+
     z-index: 9999;
 
     display: flex;
@@ -126,7 +128,6 @@ button:active {
 }
 
 @keyframes coffeePulse {
-
     0%,
     100% {
         transform: translateY(0);
@@ -140,7 +141,6 @@ button:active {
 }
 
 @keyframes loadingLine {
-
     0% {
         transform: scaleX(0);
     }
@@ -163,6 +163,7 @@ button:active {
     position: fixed;
     top: 0;
     left: 0;
+
     width: 100%;
 
     padding: 25px 5%;
@@ -1160,6 +1161,300 @@ button:active {
 
 
 /* =========================
+   ORDER TRACKING
+========================= */
+
+.tracking {
+    padding: 120px 8%;
+
+    background: #11100e;
+
+    color: #f1e8dc;
+}
+
+.tracking-container {
+    max-width: 900px;
+
+    margin: 0 auto;
+}
+
+.tracking-header {
+    max-width: 650px;
+
+    margin-bottom: 45px;
+}
+
+.tracking-header h2 {
+    font-size: clamp(42px, 6vw, 72px);
+
+    line-height: 0.95;
+
+    margin: 15px 0 25px;
+
+    color: #f1e8dc;
+}
+
+.tracking-header h2 span {
+    display: block;
+}
+
+.tracking-header > p:last-child {
+    max-width: 500px;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    color: #f1e8dc;
+}
+
+.tracking-header .eyebrow {
+    color: #c7864e;
+}
+
+.tracking-form {
+    display: flex;
+
+    gap: 15px;
+
+    max-width: 700px;
+}
+
+.tracking-form input {
+    flex: 1;
+
+    padding: 18px 20px;
+
+    border: 1px solid rgba(241, 232, 220, 0.25);
+
+    background: #171512;
+
+    color: #f1e8dc;
+
+    font-family: inherit;
+
+    font-size: 16px;
+
+    outline: none;
+}
+
+.tracking-form input::placeholder {
+    color: #756d66;
+}
+
+.tracking-form input:focus {
+    border-color: #c7864e;
+
+    box-shadow: 0 0 0 1px #c7864e;
+}
+
+.tracking-form button {
+    padding: 18px 28px;
+
+    border: none;
+
+    background: #c7864e;
+
+    color: #11100e;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+}
+
+.tracking-form button:hover {
+    opacity: 0.85;
+}
+
+.tracking-result {
+    margin-top: 45px;
+}
+
+.tracking-card {
+    background: #171512;
+
+    border: 1px solid rgba(241, 232, 220, 0.12);
+
+    padding: 30px;
+
+    color: #f1e8dc;
+}
+
+.tracking-order-number {
+    font-size: 14px;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 10px;
+
+    color: #f1e8dc;
+}
+
+.tracking-status {
+    font-size: 32px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    margin-bottom: 30px;
+
+    color: #c7864e;
+}
+
+.tracking-items {
+    display: grid;
+
+    gap: 12px;
+}
+
+.tracking-item {
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid rgba(241, 232, 220, 0.12);
+
+    color: #f1e8dc;
+}
+
+.tracking-total {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 25px;
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+    color: #f1e8dc;
+}
+
+.tracking-error {
+    padding: 20px;
+
+    background: #171512;
+
+    color: #f1e8dc;
+
+    border: 1px solid rgba(241, 232, 220, 0.15);
+
+    font-size: 15px;
+}
+
+
+/* =========================
+   ORDER PROGRESS TRACKER
+========================= */
+
+.tracking-progress {
+    display: flex;
+
+    align-items: flex-start;
+
+    width: 100%;
+
+    margin: 40px 0 50px;
+}
+
+.progress-step {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-width: 90px;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+    text-align: center;
+
+    opacity: 0.35;
+
+    color: #f1e8dc;
+}
+
+.progress-dot {
+    width: 18px;
+    height: 18px;
+
+    border: 2px solid #756d66;
+
+    border-radius: 50%;
+
+    background: #171512;
+
+    transition: 0.3s ease;
+}
+
+.progress-line {
+    flex: 1;
+
+    height: 2px;
+
+    background: rgba(241, 232, 220, 0.2);
+
+    margin-top: 8px;
+
+    min-width: 20px;
+
+    transition: 0.3s ease;
+}
+
+.progress-line.completed {
+    background: #c7864e;
+}
+
+.progress-step.completed {
+    opacity: 1;
+}
+
+.progress-step.completed .progress-dot {
+    background: #c7864e;
+
+    border-color: #c7864e;
+}
+
+.progress-step.completed .progress-dot::after {
+    content: "✓";
+
+    display: block;
+
+    color: #11100e;
+
+    font-size: 10px;
+
+    line-height: 14px;
+
+    text-align: center;
+}
+
+
+/* =========================
+   MOBILE CART BUTTON
+========================= */
+
+.mobile-cart-button {
+    display: none;
+}
+
+
+/* =========================
    MOBILE
 ========================= */
 
@@ -1279,137 +1574,13 @@ button:active {
         bottom: 15px;
 
         min-width: auto;
-
         max-width: none;
     }
 
-}
-/* =========================
-   ORDER TRACKING
-========================= */
 
-.tracking {
-    padding: 120px 8%;
-    background: #f3eee8;
-}
-
-.tracking-container {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.tracking-header {
-    max-width: 650px;
-    margin-bottom: 45px;
-}
-
-.tracking-header h2 {
-    font-size: clamp(42px, 6vw, 72px);
-    line-height: 0.95;
-    margin: 15px 0 25px;
-}
-
-.tracking-header h2 span {
-    display: block;
-}
-
-.tracking-header > p:last-child {
-    max-width: 500px;
-    font-size: 17px;
-    line-height: 1.7;
-}
-
-.tracking-form {
-    display: flex;
-    gap: 15px;
-    max-width: 700px;
-}
-
-.tracking-form input {
-    flex: 1;
-    padding: 18px 20px;
-    border: 1px solid #211b17;
-    background: transparent;
-    font-family: inherit;
-    font-size: 16px;
-    outline: none;
-}
-
-.tracking-form input:focus {
-    box-shadow: 0 0 0 2px #211b17;
-}
-
-.tracking-form button {
-    padding: 18px 28px;
-    border: none;
-    background: #211b17;
-    color: white;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
-.tracking-form button:hover {
-    opacity: 0.8;
-}
-
-.tracking-result {
-    margin-top: 45px;
-}
-
-.tracking-card {
-    border-top: 1px solid #211b17;
-    padding-top: 30px;
-}
-
-.tracking-order-number {
-    font-size: 14px;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-}
-
-.tracking-status {
-    font-size: 32px;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 30px;
-}
-
-.tracking-items {
-    display: grid;
-    gap: 12px;
-}
-
-.tracking-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 0;
-    border-bottom: 1px solid rgba(33, 27, 23, 0.2);
-}
-
-.tracking-total {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 25px;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.tracking-error {
-    padding: 20px;
-    border: 1px solid #211b17;
-    font-size: 15px;
-}
-
-
-/* =========================
-   TRACKING MOBILE
-========================= */
-
-@media (max-width: 800px) {
+    /* =========================
+       MOBILE TRACKING
+    ========================= */
 
     .tracking {
         padding: 90px 20px;
@@ -1427,89 +1598,23 @@ button:active {
         font-size: 26px;
     }
 
+    .tracking-card {
+        padding: 20px;
+    }
+
     .tracking-item {
         gap: 20px;
     }
 
-}
-
-/* =========================
-   ORDER PROGRESS TRACKER
-========================= */
-
-.tracking-progress {
-    display: flex;
-    align-items: flex-start;
-    width: 100%;
-    margin: 40px 0 50px;
-}
-
-.progress-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    min-width: 90px;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-align: center;
-    opacity: 0.35;
-}
-
-.progress-dot {
-    width: 18px;
-    height: 18px;
-    border: 2px solid #211b17;
-    border-radius: 50%;
-    background: #f3eee8;
-    transition: 0.3s ease;
-}
-
-.progress-line {
-    flex: 1;
-    height: 2px;
-    background: rgba(33, 27, 23, 0.2);
-    margin-top: 8px;
-    min-width: 20px;
-    transition: 0.3s ease;
-}
-
-.progress-line.completed {
-    background: #211b17;
-}
-
-.progress-step.completed {
-    opacity: 1;
-}
-
-.progress-step.completed .progress-dot {
-    background: #211b17;
-    border-color: #211b17;
-}
-
-.progress-step.completed .progress-dot::after {
-    content: "✓";
-    display: block;
-    color: #f3eee8;
-    font-size: 10px;
-    line-height: 14px;
-    text-align: center;
-}
-
-
-/* =========================
-   TRACKER MOBILE
-========================= */
-
-@media (max-width: 800px) {
-
     .tracking-progress {
         overflow-x: auto;
+
         padding-bottom: 10px;
     }
 
     .progress-step {
         min-width: 75px;
+
         font-size: 8px;
     }
 
@@ -1517,4 +1622,201 @@ button:active {
         min-width: 15px;
     }
 
+
+   /* =========================
+   MOBILE CART PANEL
+========================= */
+
+@media (max-width: 800px) {
+
+    .cart-panel {
+        width: 100%;
+        max-width: 100%;
+
+        height: 100dvh;
+
+        padding: 22px 18px;
+
+        border-left: none;
+    }
+
+    .cart-header {
+        margin-bottom: 20px;
+
+        padding-bottom: 16px;
+    }
+
+    .cart-header h2 {
+        font-size: 26px;
+    }
+
+    #cart-items {
+        padding-right: 2px;
+    }
+
+    .cart-item {
+        padding: 16px 0;
+    }
+
+    .cart-item-top {
+        align-items: flex-start;
+
+        gap: 12px;
+    }
+
+    .cart-item-name {
+        font-size: 12px;
+
+        max-width: 65%;
+    }
+
+    .cart-item-price {
+        font-size: 12px;
+
+        white-space: nowrap;
+    }
+
+    .quantity-controls {
+        display: flex;
+
+        align-items: center;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+        width: 100%;
+
+        margin-top: 14px;
+    }
+
+    .quantity-controls button {
+        flex-shrink: 0;
+
+        width: 32px;
+
+        height: 32px;
+    }
+
+    .quantity-controls span {
+        min-width: 20px;
+
+        text-align: center;
+    }
+
+    .remove-item {
+        width: auto !important;
+
+        min-width: auto !important;
+
+        height: auto !important;
+
+        margin-left: auto;
+
+        padding: 8px 0;
+
+        border: none !important;
+
+        color: #756d66;
+
+        white-space: nowrap;
+    }
+
+    .cart-footer {
+        padding-top: 18px;
+    }
+
+    .cart-total {
+        margin-bottom: 16px;
+    }
+
+    .cart-total strong {
+        font-size: 18px;
+    }
+
+    .cart-panel.active ~ .mobile-cart-button {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+    /* =========================
+       MOBILE ORDER BUTTON
+    ========================= */
+
+    .mobile-cart-button {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 8px;
+
+        position: fixed;
+
+        right: 20px;
+
+        bottom: 20px;
+
+        z-index: 3500;
+
+        background: #c7864e;
+
+        color: #11100e;
+
+        border: none;
+
+        border-radius: 999px;
+
+        padding: 14px 18px;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 12px;
+
+        font-weight: bold;
+
+        letter-spacing: 1px;
+
+        cursor: pointer;
+
+        box-shadow:
+            0 8px 30px rgba(0, 0, 0, 0.35);
+
+        visibility: hidden;
+
+        opacity: 0;
+    }
+
+    body.page-ready .mobile-cart-button {
+        visibility: visible;
+
+        opacity: 1;
+
+        transition:
+            opacity 0.3s ease;
+    }
+
+    .mobile-cart-button span {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        min-width: 22px;
+
+        height: 22px;
+
+        padding: 0 6px;
+
+        background: #11100e;
+
+        color: #f1e8dc;
+
+        border-radius: 999px;
+
+        font-size: 10px;
+    }
 }
