@@ -3,8 +3,7 @@
 ========================= */
 
 const API_URL =
-    "https://music-affect-shoulder-boss.trycloudflare.com";
-
+    "https://noir-and-bean-uwub.onrender.com";
 
 /* =========================
    PRODUCTS
