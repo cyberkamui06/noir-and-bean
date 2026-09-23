@@ -3,3 +3,6 @@ node_modules
 .env
 
 /generated/prisma
+
+production_seed.sql
+production_seed.sqlpg_dump
