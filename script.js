@@ -1,9 +1,30 @@
 /* =========================
-   BACKEND
+   CONFIG
 ========================= */
 
-const API_URL =
-    "https://noir-and-bean-uwub.onrender.com";
+const API_URL = "https://noir-and-bean-uwub.onrender.com";
+
+const WHATSAPP_NUMBER = "2347040636421";
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function formatCurrency(value) {
+    return `₦${Number(value).toLocaleString()}`;
+}
+
+
+function escapeHTML(value = "") {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
 
 /* =========================
    PRODUCTS
@@ -11,189 +32,146 @@ const API_URL =
 
 let products = [];
 
+
 async function loadProducts() {
-
     try {
-
-        const response =
-            await fetch(
-                `${API_URL}/api/products`
-            );
+        const response = await fetch(
+            `${API_URL}/api/products`
+        );
 
         if (!response.ok) {
-
             throw new Error(
                 "Failed to load products"
             );
-
         }
 
+        products = await response.json();
 
-        products =
-            await response.json();
-
-
-        updateProductButtons();
-
+        updateProductCards();
     } catch (error) {
-
         console.error(
             "Failed to load products:",
             error
         );
-
     }
-
 }
 
 
-function updateProductButtons() {
+/* =========================
+   UPDATE PRODUCT CARDS
+========================= */
 
-    products.forEach(
-        product => {
+function updateProductCards() {
+    products.forEach(product => {
+        const button =
+            document.querySelector(
+                `.product-card button[onclick*="addToCart(${product.id},"]`
+            );
 
-            const button =
-                document.querySelector(
-                    `.product-card button[onclick*="addToCart(${product.id},"]`
-                );
-
-
-            if (!button) return;
-
-
-            const card =
-                button.closest(
-                    ".product-card"
-                );
-
-
-            if (!card) return;
-
-
-            /* =========================
-               PRODUCT NAME
-            ========================= */
-
-            const nameElement =
-                card.querySelector(
-                    "h3"
-                );
-
-
-            if (nameElement) {
-
-                nameElement.textContent =
-                    product.name.toUpperCase();
-
-            }
-
-
-            /* =========================
-               DESCRIPTION
-            ========================= */
-
-            const descriptionElement =
-                card.querySelector(
-                    ".description"
-                );
-
-
-            if (descriptionElement) {
-
-                descriptionElement.textContent =
-                    product.description || "";
-
-            }
-
-
-            /* =========================
-               PRICE
-            ========================= */
-
-            const priceElement =
-                card.querySelector(
-                    ".price"
-                );
-
-
-            if (priceElement) {
-
-                priceElement.textContent =
-                    `₦${Number(
-                        product.price
-                    ).toLocaleString()}`;
-
-            }
-
-
-            /* =========================
-               IMAGE
-            ========================= */
-
-            const imageElement =
-                card.querySelector(
-                    ".product-image img"
-                );
-
-
-            if (
-                imageElement &&
-                product.image
-            ) {
-
-                imageElement.src =
-                    product.image;
-
-
-                imageElement.alt =
-                    product.name;
-
-            }
-
-
-            /* =========================
-               AVAILABILITY
-            ========================= */
-
-            if (product.available) {
-
-                button.disabled =
-                    false;
-
-
-                button.textContent =
-                    "ADD TO ORDER +";
-
-
-                button.style.opacity =
-                    "1";
-
-
-                button.style.cursor =
-                    "pointer";
-
-            } else {
-
-                button.disabled =
-                    true;
-
-
-                button.textContent =
-                    "UNAVAILABLE";
-
-
-                button.style.opacity =
-                    "0.5";
-
-
-                button.style.cursor =
-                    "not-allowed";
-
-            }
-
+        if (!button) {
+            return;
         }
-    );
 
+        const card =
+            button.closest(
+                ".product-card"
+            );
+
+        if (!card) {
+            return;
+        }
+
+
+        /* PRODUCT NAME */
+
+        const nameElement =
+            card.querySelector("h3");
+
+        if (nameElement) {
+            nameElement.textContent =
+                product.name;
+        }
+
+
+        /* DESCRIPTION */
+
+        const descriptionElement =
+            card.querySelector(
+                ".description"
+            );
+
+        if (descriptionElement) {
+            descriptionElement.textContent =
+                product.description || "";
+        }
+
+
+        /* PRICE */
+
+        const priceElement =
+            card.querySelector(
+                ".price"
+            );
+
+        if (priceElement) {
+            priceElement.textContent =
+                formatCurrency(
+                    product.price
+                );
+        }
+
+
+        /* IMAGE */
+
+        const imageElement =
+            card.querySelector(
+                ".product-image img"
+            );
+
+        if (
+            imageElement &&
+            product.image
+        ) {
+            imageElement.src =
+                product.image;
+
+            imageElement.alt =
+                product.name;
+        }
+
+
+        /* AVAILABILITY */
+
+        if (product.available) {
+            button.disabled = false;
+
+            button.innerHTML = `
+                <span>Add to order</span>
+                <span>+</span>
+            `;
+
+            button.style.opacity = "1";
+            button.style.cursor = "pointer";
+
+            button.removeAttribute(
+                "aria-disabled"
+            );
+        } else {
+            button.disabled = true;
+
+            button.textContent =
+                "Unavailable";
+
+            button.style.opacity = "0.45";
+            button.style.cursor =
+                "not-allowed";
+
+            button.setAttribute(
+                "aria-disabled",
+                "true"
+            );
+        }
+    });
 }
 
 
@@ -204,33 +182,50 @@ function updateProductButtons() {
 let cart = [];
 
 
+/* =========================
+   ADD TO CART
+========================= */
+
 function addToCart(
     id,
-    name,
-    price
+    fallbackName,
+    fallbackPrice
 ) {
-
     const product =
         products.find(
-            product =>
-                product.id === id
+            item =>
+                item.id === id
         );
-
 
     if (
         product &&
         !product.available
     ) {
-
         showToast(
             "Unavailable",
-            `${name} is currently unavailable.`
+            `${product.name} is currently unavailable.`
         );
 
-
         return;
-
     }
+
+
+    /*
+        Prefer the latest product data
+        from the backend.
+
+        The fallback values are only used
+        if product data has not loaded yet.
+    */
+
+    const name =
+        product?.name ||
+        fallbackName;
+
+    const price =
+        product
+            ? Number(product.price)
+            : Number(fallbackPrice);
 
 
     const existingItem =
@@ -241,23 +236,22 @@ function addToCart(
 
 
     if (existingItem) {
+        existingItem.quantity += 1;
 
-        existingItem.quantity++;
+        /*
+            Keep price/name synced
+            with the latest backend data.
+        */
 
+        existingItem.name = name;
+        existingItem.price = price;
     } else {
-
         cart.push({
-
-            id: id,
-
-            name: name,
-
-            price: price,
-
+            id,
+            name,
+            price,
             quantity: 1
-
         });
-
     }
 
 
@@ -265,10 +259,9 @@ function addToCart(
 
 
     showToast(
-        "Added to cart",
+        "Added to order",
         `${name} has been added to your order.`
     );
-
 }
 
 
@@ -277,24 +270,20 @@ function addToCart(
 ========================= */
 
 function updateCart() {
-
     const cartItems =
         document.getElementById(
             "cart-items"
         );
-
 
     const cartCount =
         document.getElementById(
             "cart-count"
         );
 
-
     const mobileCartCount =
         document.getElementById(
             "mobile-cart-count"
         );
-
 
     const cartTotal =
         document.getElementById(
@@ -307,194 +296,151 @@ function updateCart() {
         !cartCount ||
         !cartTotal
     ) {
-
         return;
-
     }
 
 
-    cartItems.innerHTML =
-        "";
+    cartItems.innerHTML = "";
 
 
     let total = 0;
-
     let itemCount = 0;
 
 
     cart.forEach(
         (item, index) => {
-
             const itemTotal =
                 item.price *
                 item.quantity;
 
 
-            total +=
-                itemTotal;
-
+            total += itemTotal;
 
             itemCount +=
                 item.quantity;
 
 
-            cartItems.innerHTML += `
+            cartItems.insertAdjacentHTML(
+                "beforeend",
+                `
+                    <div class="cart-item">
 
-                <div class="cart-item">
+                        <div class="cart-item-top">
 
-                    <div class="cart-item-top">
+                            <span class="cart-item-name">
+                                ${escapeHTML(item.name)}
+                            </span>
 
-                        <span class="cart-item-name">
+                            <span class="cart-item-price">
+                                ${formatCurrency(itemTotal)}
+                            </span>
 
-                            ${item.name}
-
-                        </span>
-
-
-                        <span class="cart-item-price">
-
-                            ₦${itemTotal.toLocaleString()}
-
-                        </span>
-
-                    </div>
+                        </div>
 
 
-                    <div class="quantity-controls">
+                        <div class="quantity-controls">
 
-                        <button
-                            onclick="decreaseQuantity(${index})"
-                        >
+                            <button
+                                type="button"
+                                onclick="decreaseQuantity(${index})"
+                                aria-label="Decrease quantity"
+                            >
+                                −
+                            </button>
 
-                            −
+                            <span>
+                                ${item.quantity}
+                            </span>
 
-                        </button>
+                            <button
+                                type="button"
+                                onclick="increaseQuantity(${index})"
+                                aria-label="Increase quantity"
+                            >
+                                +
+                            </button>
 
+                            <button
+                                type="button"
+                                class="remove-item"
+                                onclick="removeItem(${index})"
+                            >
+                                Remove
+                            </button>
 
-                        <span>
-
-                            ${item.quantity}
-
-                        </span>
-
-
-                        <button
-                            onclick="increaseQuantity(${index})"
-                        >
-
-                            +
-
-                        </button>
-
-
-                        <button
-                            class="remove-item"
-                            onclick="removeItem(${index})"
-                        >
-
-                            REMOVE
-
-                        </button>
+                        </div>
 
                     </div>
-
-                </div>
-
-            `;
-
+                `
+            );
         }
     );
 
 
-    if (
-        cart.length === 0
-    ) {
-
+    if (cart.length === 0) {
         cartItems.innerHTML = `
-
-            <p style="
-                color:#756d66;
-                font-size:12px;
-                padding:20px 0;
-            ">
-
+            <p
+                style="
+                    color:#8e8074;
+                    font-size:12px;
+                    padding:20px 0;
+                "
+            >
                 Your order is empty.
-
             </p>
-
         `;
-
     }
 
-
-    /* =========================
-       DESKTOP CART COUNT
-    ========================= */
 
     cartCount.textContent =
         itemCount;
 
 
-    /* =========================
-       MOBILE CART COUNT
-    ========================= */
-
     if (mobileCartCount) {
-
         mobileCartCount.textContent =
             itemCount;
-
     }
 
 
-    /* =========================
-       CART TOTAL
-    ========================= */
-
     cartTotal.textContent =
-        `₦${total.toLocaleString()}`;
-
+        formatCurrency(total);
 }
 
 
 /* =========================
-   INCREASE QUANTITY
+   QUANTITY
 ========================= */
 
 function increaseQuantity(index) {
+    if (!cart[index]) {
+        return;
+    }
 
-    cart[index].quantity++;
-
+    cart[index].quantity += 1;
 
     updateCart();
-
 }
 
 
-/* =========================
-   DECREASE QUANTITY
-========================= */
-
 function decreaseQuantity(index) {
+    if (!cart[index]) {
+        return;
+    }
+
 
     if (
         cart[index].quantity > 1
     ) {
-
-        cart[index].quantity--;
-
+        cart[index].quantity -= 1;
     } else {
-
         cart.splice(
             index,
             1
         );
-
     }
 
 
     updateCart();
-
 }
 
 
@@ -503,6 +449,14 @@ function decreaseQuantity(index) {
 ========================= */
 
 function removeItem(index) {
+    if (!cart[index]) {
+        return;
+    }
+
+
+    const removedItem =
+        cart[index];
+
 
     cart.splice(
         index,
@@ -515,9 +469,8 @@ function removeItem(index) {
 
     showToast(
         "Removed",
-        "Item removed from your order."
+        `${removedItem.name} was removed from your order.`
     );
-
 }
 
 
@@ -526,7 +479,6 @@ function removeItem(index) {
 ========================= */
 
 function toggleCart() {
-
     const cartPanel =
         document.getElementById(
             "cart-panel"
@@ -534,16 +486,13 @@ function toggleCart() {
 
 
     if (!cartPanel) {
-
         return;
-
     }
 
 
     cartPanel.classList.toggle(
         "active"
     );
-
 }
 
 
@@ -556,19 +505,13 @@ let orderType =
 
 
 function checkout() {
-
-    if (
-        cart.length === 0
-    ) {
-
+    if (cart.length === 0) {
         showToast(
-            "Cart is empty",
-            "Add something before checking out."
+            "Your order is empty",
+            "Choose a drink before checking out."
         );
 
-
         return;
-
     }
 
 
@@ -579,9 +522,7 @@ function checkout() {
 
 
     if (!checkoutOverlay) {
-
         return;
-
     }
 
 
@@ -591,7 +532,6 @@ function checkout() {
 
 
     updateCheckout();
-
 }
 
 
@@ -600,7 +540,6 @@ function checkout() {
 ========================= */
 
 function closeCheckout() {
-
     const checkoutOverlay =
         document.getElementById(
             "checkout-overlay"
@@ -608,16 +547,13 @@ function closeCheckout() {
 
 
     if (!checkoutOverlay) {
-
         return;
-
     }
 
 
     checkoutOverlay.classList.remove(
         "active"
     );
-
 }
 
 
@@ -626,24 +562,18 @@ function closeCheckout() {
 ========================= */
 
 function selectOrderType(type) {
-
-    orderType =
-        type;
+    orderType = type;
 
 
     document
         .querySelectorAll(
             ".order-option"
         )
-        .forEach(
-            option => {
-
-                option.classList.remove(
-                    "active"
-                );
-
-            }
-        );
+        .forEach(option => {
+            option.classList.remove(
+                "active"
+            );
+        });
 
 
     const selectedOption =
@@ -653,11 +583,9 @@ function selectOrderType(type) {
 
 
     if (selectedOption) {
-
         selectedOption.classList.add(
             "active"
         );
-
     }
 
 
@@ -668,26 +596,14 @@ function selectOrderType(type) {
 
 
     if (!addressGroup) {
-
         return;
-
     }
 
 
-    if (
+    addressGroup.style.display =
         type === "delivery"
-    ) {
-
-        addressGroup.style.display =
-            "block";
-
-    } else {
-
-        addressGroup.style.display =
-            "none";
-
-    }
-
+            ? "block"
+            : "none";
 }
 
 
@@ -696,12 +612,10 @@ function selectOrderType(type) {
 ========================= */
 
 function updateCheckout() {
-
     const checkoutItems =
         document.getElementById(
             "checkout-items"
         );
-
 
     const checkoutTotal =
         document.getElementById(
@@ -713,59 +627,48 @@ function updateCheckout() {
         !checkoutItems ||
         !checkoutTotal
     ) {
-
         return;
-
     }
 
 
-    checkoutItems.innerHTML =
-        "";
+    checkoutItems.innerHTML = "";
 
 
     let total = 0;
 
 
-    cart.forEach(
-        item => {
-
-            const itemTotal =
-                item.price *
-                item.quantity;
+    cart.forEach(item => {
+        const itemTotal =
+            item.price *
+            item.quantity;
 
 
-            total +=
-                itemTotal;
+        total += itemTotal;
 
 
-            checkoutItems.innerHTML += `
-
+        checkoutItems.insertAdjacentHTML(
+            "beforeend",
+            `
                 <div class="checkout-item">
 
                     <span>
-
-                        ${item.name} × ${item.quantity}
-
+                        ${escapeHTML(item.name)}
+                        ×
+                        ${item.quantity}
                     </span>
 
-
                     <strong>
-
-                        ₦${itemTotal.toLocaleString()}
-
+                        ${formatCurrency(itemTotal)}
                     </strong>
 
                 </div>
-
-            `;
-
-        }
-    );
+            `
+        );
+    });
 
 
     checkoutTotal.textContent =
-        `₦${total.toLocaleString()}`;
-
+        formatCurrency(total);
 }
 
 
@@ -774,41 +677,53 @@ function updateCheckout() {
 ========================= */
 
 async function placeOrder() {
+    const nameInput =
+        document.getElementById(
+            "customer-name"
+        );
+
+    const emailInput =
+        document.getElementById(
+            "customer-email"
+        );
+
+    const phoneInput =
+        document.getElementById(
+            "customer-phone"
+        );
+
+    const addressInput =
+        document.getElementById(
+            "customer-address"
+        );
+
+
+    if (
+        !nameInput ||
+        !emailInput ||
+        !phoneInput ||
+        !addressInput
+    ) {
+        showToast(
+            "Checkout error",
+            "Some checkout fields could not be found."
+        );
+
+        return;
+    }
+
 
     const name =
-        document
-            .getElementById(
-                "customer-name"
-            )
-            .value
-            .trim();
-
+        nameInput.value.trim();
 
     const email =
-        document
-            .getElementById(
-                "customer-email"
-            )
-            .value
-            .trim();
-
+        emailInput.value.trim();
 
     const phone =
-        document
-            .getElementById(
-                "customer-phone"
-            )
-            .value
-            .trim();
-
+        phoneInput.value.trim();
 
     const address =
-        document
-            .getElementById(
-                "customer-address"
-            )
-            .value
-            .trim();
+        addressInput.value.trim();
 
 
     if (
@@ -816,15 +731,12 @@ async function placeOrder() {
         !email ||
         !phone
     ) {
-
         showToast(
             "Missing details",
             "Please enter your name, email and phone number."
         );
 
-
         return;
-
     }
 
 
@@ -832,43 +744,43 @@ async function placeOrder() {
         orderType === "delivery" &&
         !address
     ) {
-
         showToast(
             "Missing address",
             "Please enter your delivery address."
         );
 
+        return;
+    }
+
+
+    if (cart.length === 0) {
+        showToast(
+            "Your order is empty",
+            "Choose a drink before placing your order."
+        );
 
         return;
-
     }
 
 
     /* =========================
-       CHECK LATEST AVAILABILITY
+       CHECK AVAILABILITY
     ========================= */
 
     try {
-
         const productResponse =
             await fetch(
                 `${API_URL}/api/products`
             );
 
 
-        if (
-            productResponse.ok
-        ) {
-
+        if (productResponse.ok) {
             const latestProducts =
                 await productResponse.json();
 
 
-            for (
-                const item of cart
-            ) {
-
-                const product =
+            for (const item of cart) {
+                const latestProduct =
                     latestProducts.find(
                         product =>
                             product.id ===
@@ -877,31 +789,30 @@ async function placeOrder() {
 
 
                 if (
-                    !product ||
-                    !product.available
+                    !latestProduct ||
+                    !latestProduct.available
                 ) {
-
                     showToast(
                         "Product unavailable",
                         `${item.name} is no longer available.`
                     );
 
-
                     return;
-
                 }
-
             }
-
         }
-
     } catch (error) {
+        /*
+            The backend validates the products again
+            when the order is submitted, so this
+            preliminary check failing does not have
+            to stop checkout.
+        */
 
         console.error(
             "Availability check failed:",
             error
         );
-
     }
 
 
@@ -910,80 +821,54 @@ async function placeOrder() {
     ========================= */
 
     const orderItems =
-        cart.map(
-            item => ({
+        cart.map(item => ({
+            productId:
+                item.id,
 
-                productId:
-                    item.id,
-
-
-                quantity:
-                    item.quantity
-
-            })
-        );
+            quantity:
+                item.quantity
+        }));
 
 
     try {
-
         showToast(
             "Processing order",
-            "Please wait while we save your order."
+            "We're saving your order."
         );
 
 
         /* =========================
-           SEND ORDER TO BACKEND
+           SEND TO BACKEND
         ========================= */
 
         const response =
             await fetch(
                 `${API_URL}/api/orders`,
                 {
-
-                    method:
-                        "POST",
-
+                    method: "POST",
 
                     headers: {
-
                         "Content-Type":
                             "application/json"
-
                     },
-
 
                     body:
                         JSON.stringify({
-
                             customer: {
-
-                                name:
-                                    name,
-
-
-                                email:
-                                    email,
-
-
-                                phone:
-                                    phone,
-
+                                name,
+                                email,
+                                phone,
 
                                 address:
                                     orderType ===
                                     "delivery"
                                         ? address
                                         : "Pickup"
-
                             },
-
 
                             items:
                                 orderItems
-
                         })
-
                 }
             );
 
@@ -992,15 +877,11 @@ async function placeOrder() {
             await response.json();
 
 
-        if (
-            !response.ok
-        ) {
-
+        if (!response.ok) {
             throw new Error(
                 data.error ||
                 "Failed to create order"
             );
-
         }
 
 
@@ -1013,7 +894,7 @@ async function placeOrder() {
         ========================= */
 
         let message =
-            `Hello NOIR & BEAN \n\n`;
+            `Hello NOIR & BEAN\n\n`;
 
 
         message +=
@@ -1039,10 +920,8 @@ async function placeOrder() {
         if (
             orderType === "delivery"
         ) {
-
             message +=
                 `Address: ${address}\n`;
-
         }
 
 
@@ -1050,78 +929,63 @@ async function placeOrder() {
             `\nORDER:\n`;
 
 
-        order.items.forEach(
-            item => {
-
-                const itemTotal =
-                    Number(
-                        item.price
-                    ) *
-                    item.quantity;
+        order.items.forEach(item => {
+            const itemTotal =
+                Number(item.price) *
+                item.quantity;
 
 
-                message +=
-                    `${item.product.name} × ${item.quantity} — ₦${itemTotal.toLocaleString()}\n`;
-
-            }
-        );
+            message +=
+                `${item.product.name} × ${item.quantity} — ${formatCurrency(itemTotal)}\n`;
+        });
 
 
         message +=
-            `\nTOTAL: ₦${Number(
-                order.total
-            ).toLocaleString()}`;
+            `\nTOTAL: ${formatCurrency(order.total)}`;
+
+
+        const whatsappURL =
+            `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
 
         /* =========================
-           WHATSAPP URL
+           SUCCESS
         ========================= */
 
-        const whatsappURL =
-            "https://wa.me/2347040636421?text=" +
-            encodeURIComponent(
-                message
-            );
-
-
         showToast(
-            "Order placed!",
+            "Order placed",
             `Order #${order.id} has been saved successfully.`
         );
 
 
-        /* =========================
-           CLEAR CART
-        ========================= */
-
         cart = [];
 
-
         updateCart();
-
 
         closeCheckout();
 
 
-        /* =========================
-           OPEN WHATSAPP
-        ========================= */
+        /*
+            Clear checkout fields
+            after successful order.
+        */
+
+        nameInput.value = "";
+        emailInput.value = "";
+        phoneInput.value = "";
+        addressInput.value = "";
+
 
         setTimeout(
             () => {
-
                 window.open(
                     whatsappURL,
                     "_blank"
                 );
-
             },
             700
         );
-
-
     } catch (error) {
-
         console.error(
             "Order failed:",
             error
@@ -1130,11 +994,10 @@ async function placeOrder() {
 
         showToast(
             "Order failed",
-            "We couldn't save your order. Please try again."
+            error.message ||
+                "We couldn't save your order. Please try again."
         );
-
     }
-
 }
 
 
@@ -1149,18 +1012,15 @@ function showToast(
     title,
     message
 ) {
-
     const toast =
         document.getElementById(
             "toast"
         );
 
-
     const toastTitle =
         document.getElementById(
             "toast-title"
         );
-
 
     const toastMessage =
         document.getElementById(
@@ -1173,15 +1033,12 @@ function showToast(
         !toastTitle ||
         !toastMessage
     ) {
-
         return;
-
     }
 
 
     toastTitle.textContent =
         title;
-
 
     toastMessage.textContent =
         message;
@@ -1200,15 +1057,12 @@ function showToast(
     toastTimer =
         setTimeout(
             () => {
-
                 toast.classList.remove(
                     "show"
                 );
-
             },
             3000
         );
-
 }
 
 
@@ -1219,7 +1073,6 @@ function showToast(
 window.addEventListener(
     "load",
     () => {
-
         const loader =
             document.getElementById(
                 "page-loader"
@@ -1228,32 +1081,19 @@ window.addEventListener(
 
         setTimeout(
             () => {
-
-                /* =========================
-                   HIDE LOADER
-                ========================= */
-
                 if (loader) {
-
                     loader.classList.add(
                         "loaded"
                     );
-
                 }
 
-
-                /* =========================
-                   SHOW MOBILE ORDER BUTTON
-                ========================= */
 
                 document.body.classList.add(
                     "page-ready"
                 );
-
             },
             700
         );
-
     }
 );
 
@@ -1264,66 +1104,53 @@ window.addEventListener(
 
 const revealElements =
     document.querySelectorAll(
-        ".product-card, .about, .contact-container, .section-title"
+        [
+            ".product-card",
+            ".about",
+            ".tracking-container",
+            ".contact-container",
+            ".section-heading"
+        ].join(", ")
     );
 
 
 revealElements.forEach(
     element => {
-
         element.classList.add(
             "reveal"
         );
-
     }
 );
 
 
 const revealObserver =
     new IntersectionObserver(
-
         entries => {
+            entries.forEach(entry => {
+                if (
+                    entry.isIntersecting
+                ) {
+                    entry.target.classList.add(
+                        "visible"
+                    );
 
-            entries.forEach(
-                entry => {
-
-                    if (
-                        entry.isIntersecting
-                    ) {
-
-                        entry.target.classList.add(
-                            "visible"
-                        );
-
-
-                        revealObserver.unobserve(
-                            entry.target
-                        );
-
-                    }
-
+                    revealObserver.unobserve(
+                        entry.target
+                    );
                 }
-            );
-
+            });
         },
-
         {
-
-            threshold:
-                0.12
-
+            threshold: 0.1
         }
-
     );
 
 
 revealElements.forEach(
     element => {
-
         revealObserver.observe(
             element
         );
-
     }
 );
 
@@ -1333,12 +1160,10 @@ revealElements.forEach(
 ========================= */
 
 function toggleMobileMenu() {
-
     const navLinks =
         document.getElementById(
             "nav-links"
         );
-
 
     const menuToggle =
         document.getElementById(
@@ -1350,9 +1175,7 @@ function toggleMobileMenu() {
         !navLinks ||
         !menuToggle
     ) {
-
         return;
-
     }
 
 
@@ -1360,59 +1183,45 @@ function toggleMobileMenu() {
         "active"
     );
 
-
     menuToggle.classList.toggle(
         "active"
     );
-
 }
 
+
+/* CLOSE MOBILE MENU
+   AFTER LINK CLICK
+========================= */
 
 document
     .querySelectorAll(
         "#nav-links a"
     )
-    .forEach(
-        link => {
+    .forEach(link => {
+        link.addEventListener(
+            "click",
+            () => {
+                const navLinks =
+                    document.getElementById(
+                        "nav-links"
+                    );
 
-            link.addEventListener(
-                "click",
-                () => {
-
-                    const navLinks =
-                        document.getElementById(
-                            "nav-links"
-                        );
-
-
-                    const menuToggle =
-                        document.getElementById(
-                            "menu-toggle"
-                        );
+                const menuToggle =
+                    document.getElementById(
+                        "menu-toggle"
+                    );
 
 
-                    if (navLinks) {
+                navLinks?.classList.remove(
+                    "active"
+                );
 
-                        navLinks.classList.remove(
-                            "active"
-                        );
-
-                    }
-
-
-                    if (menuToggle) {
-
-                        menuToggle.classList.remove(
-                            "active"
-                        );
-
-                    }
-
-                }
-            );
-
-        }
-    );
+                menuToggle?.classList.remove(
+                    "active"
+                );
+            }
+        );
+    });
 
 
 /* =========================
@@ -1424,7 +1233,6 @@ const trackingForm =
         "tracking-form"
     );
 
-
 const trackingResult =
     document.getElementById(
         "tracking-result"
@@ -1435,36 +1243,40 @@ if (
     trackingForm &&
     trackingResult
 ) {
-
     trackingForm.addEventListener(
         "submit",
-        async function (event) {
-
+        async event => {
             event.preventDefault();
 
 
-            const orderId =
-                document
-                    .getElementById(
-                        "tracking-order-id"
-                    )
-                    .value
-                    .trim();
+            const orderInput =
+                document.getElementById(
+                    "tracking-order-id"
+                );
 
 
-            if (!orderId) {
-
+            if (!orderInput) {
                 return;
-
             }
 
 
-            trackingResult.innerHTML =
-                "<p>Checking your order...</p>";
+            const orderId =
+                orderInput.value.trim();
+
+
+            if (!orderId) {
+                return;
+            }
+
+
+            trackingResult.innerHTML = `
+                <p>
+                    Checking your order...
+                </p>
+            `;
 
 
             try {
-
                 const response =
                     await fetch(
                         `${API_URL}/api/orders/track/${orderId}`
@@ -1475,82 +1287,64 @@ if (
                     await response.json();
 
 
-                if (
-                    !response.ok
-                ) {
-
+                if (!response.ok) {
                     trackingResult.innerHTML = `
-
                         <div class="tracking-error">
-
-                            ${data.error || "Order not found."}
-
+                            ${escapeHTML(
+                                data.error ||
+                                "Order not found."
+                            )}
                         </div>
-
                     `;
 
-
                     return;
-
                 }
 
 
                 /* =========================
-                   CURRENT STATUS
+                   STATUS
                 ========================= */
 
+                const rawStatus =
+                    String(
+                        data.status ||
+                        "pending"
+                    );
+
+
                 const status =
-                    data.status
-                        .replace(
-                            "-",
-                            " "
-                        )
+                    rawStatus
+                        .replaceAll("-", " ")
                         .toUpperCase();
 
 
-                /* =========================
-                   STATUS ORDER
-                ========================= */
-
                 const progressStatuses = [
-
                     "pending",
-
                     "confirmed",
-
                     "preparing",
-
                     "ready",
-
                     "delivered"
+                ];
 
+
+                const progressSteps = [
+                    "PENDING",
+                    "CONFIRMED",
+                    "PREPARING",
+                    "READY",
+                    "DELIVERED"
                 ];
 
 
                 const currentStatusIndex =
                     progressStatuses.indexOf(
-                        data.status
+                        rawStatus
                     );
 
 
                 /* =========================
-                   PROGRESS STEPS
+                   PROGRESS BAR
                 ========================= */
-
-                const progressSteps = [
-
-                    "PENDING",
-
-                    "CONFIRMED",
-
-                    "PREPARING",
-
-                    "READY",
-
-                    "DELIVERED"
-
-                ];
-
 
                 const progressHTML =
                     progressSteps
@@ -1559,7 +1353,6 @@ if (
                                 step,
                                 index
                             ) => {
-
                                 const completed =
                                     index <=
                                     currentStatusIndex
@@ -1570,9 +1363,7 @@ if (
                                 const line =
                                     index <
                                     progressSteps.length - 1
-
                                         ? `
-
                                             <div
                                                 class="progress-line ${
                                                     index <
@@ -1581,36 +1372,25 @@ if (
                                                         : ""
                                                 }"
                                             ></div>
-
                                         `
-
                                         : "";
 
 
                                 return `
-
                                     <div
                                         class="progress-step ${completed}"
                                     >
-
                                         <span
                                             class="progress-dot"
                                         ></span>
 
-
                                         <span>
-
                                             ${step}
-
                                         </span>
-
                                     </div>
 
-
                                     ${line}
-
                                 `;
-
                             }
                         )
                         .join("");
@@ -1622,97 +1402,86 @@ if (
 
                 const items =
                     data.items
-                        .map(
-                            item => `
+                        .map(item => {
+                            const itemTotal =
+                                Number(
+                                    item.price
+                                ) *
+                                item.quantity;
 
-                                <div class="tracking-item">
 
+                            return `
+                                <div
+                                    class="tracking-item"
+                                >
                                     <span>
-
-                                        ${item.product.name}
+                                        ${escapeHTML(
+                                            item.product.name
+                                        )}
                                         ×
                                         ${item.quantity}
-
                                     </span>
-
 
                                     <span>
-
-                                        ₦${Number(
-                                            item.price
-                                        ).toLocaleString()}
-
+                                        ${formatCurrency(
+                                            itemTotal
+                                        )}
                                     </span>
-
                                 </div>
-
-                            `
-                        )
+                            `;
+                        })
                         .join("");
 
 
                 /* =========================
-                   DISPLAY TRACKING
+                   DISPLAY
                 ========================= */
 
                 trackingResult.innerHTML = `
-
                     <div class="tracking-card">
 
                         <p class="tracking-order-number">
-
-                            ORDER #${data.id}
-
+                            Order #${data.id}
                         </p>
 
-
                         <div class="tracking-status">
-
-                            ${status}
-
+                            ${escapeHTML(status)}
                         </div>
 
-
-                        <div class="tracking-progress">
-
-                            ${progressHTML}
-
-                        </div>
-
+                        ${
+                            rawStatus !==
+                            "cancelled"
+                                ? `
+                                    <div
+                                        class="tracking-progress"
+                                    >
+                                        ${progressHTML}
+                                    </div>
+                                `
+                                : ""
+                        }
 
                         <div class="tracking-items">
-
                             ${items}
-
                         </div>
-
 
                         <div class="tracking-total">
 
                             <span>
-
-                                TOTAL
-
+                                Total
                             </span>
 
-
                             <span>
-
-                                ₦${Number(
+                                ${formatCurrency(
                                     data.total
-                                ).toLocaleString()}
-
+                                )}
                             </span>
 
                         </div>
 
                     </div>
-
                 `;
-
-
             } catch (error) {
-
                 console.error(
                     "Tracking failed:",
                     error
@@ -1720,21 +1489,14 @@ if (
 
 
                 trackingResult.innerHTML = `
-
                     <div class="tracking-error">
-
                         Unable to connect to the server.
                         Please try again.
-
                     </div>
-
                 `;
-
             }
-
         }
     );
-
 }
 
 
@@ -1742,17 +1504,6 @@ if (
    START
 ========================= */
 
-/*
-    Makes sure both the desktop
-    and mobile cart counters start
-    at 0 when the page opens.
-*/
-
 updateCart();
-
-
-/*
-    Load products from backend.
-*/
 
 loadProducts();
