@@ -39,15 +39,19 @@ async function loadProducts() {
             `${API_URL}/api/products`
         );
 
+
         if (!response.ok) {
             throw new Error(
                 "Failed to load products"
             );
         }
 
+
         products = await response.json();
 
+
         updateProductCards();
+
     } catch (error) {
         console.error(
             "Failed to load products:",
@@ -62,20 +66,25 @@ async function loadProducts() {
 ========================= */
 
 function updateProductCards() {
+
     products.forEach(product => {
+
         const button =
             document.querySelector(
                 `.product-card button[onclick*="addToCart(${product.id},"]`
             );
 
+
         if (!button) {
             return;
         }
+
 
         const card =
             button.closest(
                 ".product-card"
             );
+
 
         if (!card) {
             return;
@@ -86,6 +95,7 @@ function updateProductCards() {
 
         const nameElement =
             card.querySelector("h3");
+
 
         if (nameElement) {
             nameElement.textContent =
@@ -100,6 +110,7 @@ function updateProductCards() {
                 ".description"
             );
 
+
         if (descriptionElement) {
             descriptionElement.textContent =
                 product.description || "";
@@ -112,6 +123,7 @@ function updateProductCards() {
             card.querySelector(
                 ".price"
             );
+
 
         if (priceElement) {
             priceElement.textContent =
@@ -128,6 +140,7 @@ function updateProductCards() {
                 ".product-image img"
             );
 
+
         if (
             imageElement &&
             product.image
@@ -143,35 +156,47 @@ function updateProductCards() {
         /* AVAILABILITY */
 
         if (product.available) {
+
             button.disabled = false;
+
 
             button.innerHTML = `
                 <span>Add to order</span>
                 <span>+</span>
             `;
 
+
             button.style.opacity = "1";
             button.style.cursor = "pointer";
+
 
             button.removeAttribute(
                 "aria-disabled"
             );
+
         } else {
+
             button.disabled = true;
+
 
             button.textContent =
                 "Unavailable";
 
+
             button.style.opacity = "0.45";
+
             button.style.cursor =
                 "not-allowed";
+
 
             button.setAttribute(
                 "aria-disabled",
                 "true"
             );
         }
+
     });
+
 }
 
 
@@ -191,20 +216,24 @@ function addToCart(
     fallbackName,
     fallbackPrice
 ) {
+
     const product =
         products.find(
             item =>
                 item.id === id
         );
 
+
     if (
         product &&
         !product.available
     ) {
+
         showToast(
             "Unavailable",
             `${product.name} is currently unavailable.`
         );
+
 
         return;
     }
@@ -222,6 +251,7 @@ function addToCart(
         product?.name ||
         fallbackName;
 
+
     const price =
         product
             ? Number(product.price)
@@ -236,7 +266,9 @@ function addToCart(
 
 
     if (existingItem) {
+
         existingItem.quantity += 1;
+
 
         /*
             Keep price/name synced
@@ -245,13 +277,16 @@ function addToCart(
 
         existingItem.name = name;
         existingItem.price = price;
+
     } else {
+
         cart.push({
             id,
             name,
             price,
             quantity: 1
         });
+
     }
 
 
@@ -262,6 +297,7 @@ function addToCart(
         "Added to order",
         `${name} has been added to your order.`
     );
+
 }
 
 
@@ -270,20 +306,24 @@ function addToCart(
 ========================= */
 
 function updateCart() {
+
     const cartItems =
         document.getElementById(
             "cart-items"
         );
+
 
     const cartCount =
         document.getElementById(
             "cart-count"
         );
 
+
     const mobileCartCount =
         document.getElementById(
             "mobile-cart-count"
         );
+
 
     const cartTotal =
         document.getElementById(
@@ -309,12 +349,14 @@ function updateCart() {
 
     cart.forEach(
         (item, index) => {
+
             const itemTotal =
                 item.price *
                 item.quantity;
 
 
             total += itemTotal;
+
 
             itemCount +=
                 item.quantity;
@@ -373,11 +415,13 @@ function updateCart() {
                     </div>
                 `
             );
+
         }
     );
 
 
     if (cart.length === 0) {
+
         cartItems.innerHTML = `
             <p
                 style="
@@ -389,6 +433,7 @@ function updateCart() {
                 Your order is empty.
             </p>
         `;
+
     }
 
 
@@ -397,13 +442,16 @@ function updateCart() {
 
 
     if (mobileCartCount) {
+
         mobileCartCount.textContent =
             itemCount;
+
     }
 
 
     cartTotal.textContent =
         formatCurrency(total);
+
 }
 
 
@@ -412,17 +460,22 @@ function updateCart() {
 ========================= */
 
 function increaseQuantity(index) {
+
     if (!cart[index]) {
         return;
     }
 
+
     cart[index].quantity += 1;
 
+
     updateCart();
+
 }
 
 
 function decreaseQuantity(index) {
+
     if (!cart[index]) {
         return;
     }
@@ -431,16 +484,21 @@ function decreaseQuantity(index) {
     if (
         cart[index].quantity > 1
     ) {
+
         cart[index].quantity -= 1;
+
     } else {
+
         cart.splice(
             index,
             1
         );
+
     }
 
 
     updateCart();
+
 }
 
 
@@ -449,6 +507,7 @@ function decreaseQuantity(index) {
 ========================= */
 
 function removeItem(index) {
+
     if (!cart[index]) {
         return;
     }
@@ -471,6 +530,7 @@ function removeItem(index) {
         "Removed",
         `${removedItem.name} was removed from your order.`
     );
+
 }
 
 
@@ -479,6 +539,7 @@ function removeItem(index) {
 ========================= */
 
 function toggleCart() {
+
     const cartPanel =
         document.getElementById(
             "cart-panel"
@@ -493,6 +554,7 @@ function toggleCart() {
     cartPanel.classList.toggle(
         "active"
     );
+
 }
 
 
@@ -505,11 +567,14 @@ let orderType =
 
 
 function checkout() {
+
     if (cart.length === 0) {
+
         showToast(
             "Your order is empty",
             "Choose a drink before checking out."
         );
+
 
         return;
     }
@@ -532,6 +597,7 @@ function checkout() {
 
 
     updateCheckout();
+
 }
 
 
@@ -540,6 +606,7 @@ function checkout() {
 ========================= */
 
 function closeCheckout() {
+
     const checkoutOverlay =
         document.getElementById(
             "checkout-overlay"
@@ -554,6 +621,7 @@ function closeCheckout() {
     checkoutOverlay.classList.remove(
         "active"
     );
+
 }
 
 
@@ -562,6 +630,7 @@ function closeCheckout() {
 ========================= */
 
 function selectOrderType(type) {
+
     orderType = type;
 
 
@@ -570,9 +639,11 @@ function selectOrderType(type) {
             ".order-option"
         )
         .forEach(option => {
+
             option.classList.remove(
                 "active"
             );
+
         });
 
 
@@ -583,9 +654,11 @@ function selectOrderType(type) {
 
 
     if (selectedOption) {
+
         selectedOption.classList.add(
             "active"
         );
+
     }
 
 
@@ -604,6 +677,7 @@ function selectOrderType(type) {
         type === "delivery"
             ? "block"
             : "none";
+
 }
 
 
@@ -612,10 +686,12 @@ function selectOrderType(type) {
 ========================= */
 
 function updateCheckout() {
+
     const checkoutItems =
         document.getElementById(
             "checkout-items"
         );
+
 
     const checkoutTotal =
         document.getElementById(
@@ -638,6 +714,7 @@ function updateCheckout() {
 
 
     cart.forEach(item => {
+
         const itemTotal =
             item.price *
             item.quantity;
@@ -664,11 +741,13 @@ function updateCheckout() {
                 </div>
             `
         );
+
     });
 
 
     checkoutTotal.textContent =
         formatCurrency(total);
+
 }
 
 
@@ -677,20 +756,24 @@ function updateCheckout() {
 ========================= */
 
 async function placeOrder() {
+
     const nameInput =
         document.getElementById(
             "customer-name"
         );
+
 
     const emailInput =
         document.getElementById(
             "customer-email"
         );
 
+
     const phoneInput =
         document.getElementById(
             "customer-phone"
         );
+
 
     const addressInput =
         document.getElementById(
@@ -704,10 +787,12 @@ async function placeOrder() {
         !phoneInput ||
         !addressInput
     ) {
+
         showToast(
             "Checkout error",
             "Some checkout fields could not be found."
         );
+
 
         return;
     }
@@ -716,11 +801,14 @@ async function placeOrder() {
     const name =
         nameInput.value.trim();
 
+
     const email =
         emailInput.value.trim();
 
+
     const phone =
         phoneInput.value.trim();
+
 
     const address =
         addressInput.value.trim();
@@ -731,10 +819,12 @@ async function placeOrder() {
         !email ||
         !phone
     ) {
+
         showToast(
             "Missing details",
             "Please enter your name, email and phone number."
         );
+
 
         return;
     }
@@ -744,20 +834,24 @@ async function placeOrder() {
         orderType === "delivery" &&
         !address
     ) {
+
         showToast(
             "Missing address",
             "Please enter your delivery address."
         );
+
 
         return;
     }
 
 
     if (cart.length === 0) {
+
         showToast(
             "Your order is empty",
             "Choose a drink before placing your order."
         );
+
 
         return;
     }
@@ -768,6 +862,7 @@ async function placeOrder() {
     ========================= */
 
     try {
+
         const productResponse =
             await fetch(
                 `${API_URL}/api/products`
@@ -775,11 +870,13 @@ async function placeOrder() {
 
 
         if (productResponse.ok) {
+
             const latestProducts =
                 await productResponse.json();
 
 
             for (const item of cart) {
+
                 const latestProduct =
                     latestProducts.find(
                         product =>
@@ -792,16 +889,22 @@ async function placeOrder() {
                     !latestProduct ||
                     !latestProduct.available
                 ) {
+
                     showToast(
                         "Product unavailable",
                         `${item.name} is no longer available.`
                     );
 
+
                     return;
                 }
+
             }
+
         }
+
     } catch (error) {
+
         /*
             The backend validates the products again
             when the order is submitted, so this
@@ -813,6 +916,7 @@ async function placeOrder() {
             "Availability check failed:",
             error
         );
+
     }
 
 
@@ -822,15 +926,18 @@ async function placeOrder() {
 
     const orderItems =
         cart.map(item => ({
+
             productId:
                 item.id,
 
             quantity:
                 item.quantity
+
         }));
 
 
     try {
+
         showToast(
             "Processing order",
             "We're saving your order."
@@ -854,6 +961,7 @@ async function placeOrder() {
 
                     body:
                         JSON.stringify({
+
                             customer: {
                                 name,
                                 email,
@@ -878,10 +986,12 @@ async function placeOrder() {
 
 
         if (!response.ok) {
+
             throw new Error(
                 data.error ||
                 "Failed to create order"
             );
+
         }
 
 
@@ -920,8 +1030,10 @@ async function placeOrder() {
         if (
             orderType === "delivery"
         ) {
+
             message +=
                 `Address: ${address}\n`;
+
         }
 
 
@@ -930,6 +1042,7 @@ async function placeOrder() {
 
 
         order.items.forEach(item => {
+
             const itemTotal =
                 Number(item.price) *
                 item.quantity;
@@ -937,6 +1050,7 @@ async function placeOrder() {
 
             message +=
                 `${item.product.name} × ${item.quantity} — ${formatCurrency(itemTotal)}\n`;
+
         });
 
 
@@ -960,7 +1074,9 @@ async function placeOrder() {
 
         cart = [];
 
+
         updateCart();
+
 
         closeCheckout();
 
@@ -978,14 +1094,18 @@ async function placeOrder() {
 
         setTimeout(
             () => {
+
                 window.open(
                     whatsappURL,
                     "_blank"
                 );
+
             },
             700
         );
+
     } catch (error) {
+
         console.error(
             "Order failed:",
             error
@@ -994,10 +1114,13 @@ async function placeOrder() {
 
         showToast(
             "Order failed",
+
             error.message ||
                 "We couldn't save your order. Please try again."
         );
+
     }
+
 }
 
 
@@ -1012,15 +1135,18 @@ function showToast(
     title,
     message
 ) {
+
     const toast =
         document.getElementById(
             "toast"
         );
 
+
     const toastTitle =
         document.getElementById(
             "toast-title"
         );
+
 
     const toastMessage =
         document.getElementById(
@@ -1040,6 +1166,7 @@ function showToast(
     toastTitle.textContent =
         title;
 
+
     toastMessage.textContent =
         message;
 
@@ -1057,12 +1184,15 @@ function showToast(
     toastTimer =
         setTimeout(
             () => {
+
                 toast.classList.remove(
                     "show"
                 );
+
             },
             3000
         );
+
 }
 
 
@@ -1073,6 +1203,7 @@ function showToast(
 window.addEventListener(
     "load",
     () => {
+
         const loader =
             document.getElementById(
                 "page-loader"
@@ -1081,19 +1212,24 @@ window.addEventListener(
 
         setTimeout(
             () => {
+
                 if (loader) {
+
                     loader.classList.add(
                         "loaded"
                     );
+
                 }
 
 
                 document.body.classList.add(
                     "page-ready"
                 );
+
             },
             700
         );
+
     }
 );
 
@@ -1116,9 +1252,11 @@ const revealElements =
 
 revealElements.forEach(
     element => {
+
         element.classList.add(
             "reveal"
         );
+
     }
 );
 
@@ -1126,19 +1264,26 @@ revealElements.forEach(
 const revealObserver =
     new IntersectionObserver(
         entries => {
+
             entries.forEach(entry => {
+
                 if (
                     entry.isIntersecting
                 ) {
+
                     entry.target.classList.add(
                         "visible"
                     );
 
+
                     revealObserver.unobserve(
                         entry.target
                     );
+
                 }
+
             });
+
         },
         {
             threshold: 0.1
@@ -1148,9 +1293,11 @@ const revealObserver =
 
 revealElements.forEach(
     element => {
+
         revealObserver.observe(
             element
         );
+
     }
 );
 
@@ -1160,10 +1307,12 @@ revealElements.forEach(
 ========================= */
 
 function toggleMobileMenu() {
+
     const navLinks =
         document.getElementById(
             "nav-links"
         );
+
 
     const menuToggle =
         document.getElementById(
@@ -1183,9 +1332,11 @@ function toggleMobileMenu() {
         "active"
     );
 
+
     menuToggle.classList.toggle(
         "active"
     );
+
 }
 
 
@@ -1198,13 +1349,16 @@ document
         "#nav-links a"
     )
     .forEach(link => {
+
         link.addEventListener(
             "click",
             () => {
+
                 const navLinks =
                     document.getElementById(
                         "nav-links"
                     );
+
 
                 const menuToggle =
                     document.getElementById(
@@ -1216,11 +1370,14 @@ document
                     "active"
                 );
 
+
                 menuToggle?.classList.remove(
                     "active"
                 );
+
             }
         );
+
     });
 
 
@@ -1233,6 +1390,7 @@ const trackingForm =
         "tracking-form"
     );
 
+
 const trackingResult =
     document.getElementById(
         "tracking-result"
@@ -1243,9 +1401,11 @@ if (
     trackingForm &&
     trackingResult
 ) {
+
     trackingForm.addEventListener(
         "submit",
         async event => {
+
             event.preventDefault();
 
 
@@ -1277,6 +1437,7 @@ if (
 
 
             try {
+
                 const response =
                     await fetch(
                         `${API_URL}/api/orders/track/${orderId}`
@@ -1288,14 +1449,18 @@ if (
 
 
                 if (!response.ok) {
+
                     trackingResult.innerHTML = `
                         <div class="tracking-error">
+
                             ${escapeHTML(
                                 data.error ||
                                 "Order not found."
                             )}
+
                         </div>
                     `;
+
 
                     return;
                 }
@@ -1353,6 +1518,7 @@ if (
                                 step,
                                 index
                             ) => {
+
                                 const completed =
                                     index <=
                                     currentStatusIndex
@@ -1363,6 +1529,7 @@ if (
                                 const line =
                                     index <
                                     progressSteps.length - 1
+
                                         ? `
                                             <div
                                                 class="progress-line ${
@@ -1373,6 +1540,7 @@ if (
                                                 }"
                                             ></div>
                                         `
+
                                         : "";
 
 
@@ -1380,6 +1548,7 @@ if (
                                     <div
                                         class="progress-step ${completed}"
                                     >
+
                                         <span
                                             class="progress-dot"
                                         ></span>
@@ -1387,10 +1556,12 @@ if (
                                         <span>
                                             ${step}
                                         </span>
+
                                     </div>
 
                                     ${line}
                                 `;
+
                             }
                         )
                         .join("");
@@ -1403,6 +1574,7 @@ if (
                 const items =
                     data.items
                         .map(item => {
+
                             const itemTotal =
                                 Number(
                                     item.price
@@ -1414,21 +1586,31 @@ if (
                                 <div
                                     class="tracking-item"
                                 >
+
                                     <span>
+
                                         ${escapeHTML(
                                             item.product.name
                                         )}
+
                                         ×
+
                                         ${item.quantity}
+
                                     </span>
 
+
                                     <span>
+
                                         ${formatCurrency(
                                             itemTotal
                                         )}
+
                                     </span>
+
                                 </div>
                             `;
+
                         })
                         .join("");
 
@@ -1444,13 +1626,16 @@ if (
                             Order #${data.id}
                         </p>
 
+
                         <div class="tracking-status">
                             ${escapeHTML(status)}
                         </div>
 
+
                         ${
                             rawStatus !==
                             "cancelled"
+
                                 ? `
                                     <div
                                         class="tracking-progress"
@@ -1458,12 +1643,15 @@ if (
                                         ${progressHTML}
                                     </div>
                                 `
+
                                 : ""
                         }
+
 
                         <div class="tracking-items">
                             ${items}
                         </div>
+
 
                         <div class="tracking-total">
 
@@ -1481,7 +1669,9 @@ if (
 
                     </div>
                 `;
+
             } catch (error) {
+
                 console.error(
                     "Tracking failed:",
                     error
@@ -1490,13 +1680,18 @@ if (
 
                 trackingResult.innerHTML = `
                     <div class="tracking-error">
+
                         Unable to connect to the server.
                         Please try again.
+
                     </div>
                 `;
+
             }
+
         }
     );
+
 }
 
 

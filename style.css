@@ -485,6 +485,7 @@ textarea,
         );
 
     background: var(--ink);
+
     color: var(--text-light);
 }
 
@@ -551,6 +552,7 @@ textarea,
     margin-bottom: 62px;
 
     display: flex;
+
     align-items: center;
 
     gap: 25px;
@@ -562,6 +564,7 @@ textarea,
     border-radius: 3px;
 
     background: var(--paper);
+
     color: var(--ink);
 
     font-size: 12px;
@@ -577,6 +580,7 @@ textarea,
 
 .text-button {
     display: inline-flex;
+
     align-items: center;
 
     gap: 8px;
@@ -2141,6 +2145,7 @@ textarea,
     z-index: 5000;
 
     min-width: 290px;
+
     max-width: 360px;
 
     padding:
